@@ -18,6 +18,11 @@ public:
         koi8r_cp866,
         koi8r_cp1251
     };
+    enum codeTable{
+        koi8r,
+        cp1251,
+        cp866
+    };
 
     bool ChangeCode(string sourceFile,TypeOfChange type);
 private:

@@ -7,5 +7,5 @@ SOURCES += main.cpp \
     translator.cpp
 
 HEADERS += \
-    translator.h \
-    codeTables.h
+    codeTables.h \
+    translator.h
