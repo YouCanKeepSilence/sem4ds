@@ -1,6 +1,13 @@
 #ifndef CODE_H
 #define CODE_H
 
+enum codeTable{
+    koi8r,
+    cp1251,
+    cp866,
+    NoOne
+};
+
 static const unsigned char frequentChar[18] ={
 //  cp1251
 //   О  \\ о  \\ А  \\ а  \\ Е  \\ е

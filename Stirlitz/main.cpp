@@ -1,31 +1,32 @@
 #include <iostream>
 #include <fstream>
 #include "translator.h"
+#include "analyzer.h"
 using namespace std;
 
 
 int main(int argc, char *argv[])
 {
-    fstream fromFile,toFile;
-    fromFile.open("2.txt",ios_base::out);
-    toFile.open("1.txt",ios_base::out);
-    unsigned char c;
-    string str;
-    getline(cin,str);
-    fromFile<<str;
-    fromFile.close();
-    fromFile.open("2.txt",ios_base::in);
-    while(!fromFile.eof())
-    {
-        c=fromFile.get();
-        cout<<(int)c<<" "<<c<<endl;
-
-        if((c>=128)&&((c<=256)))
-        {
-        c=Cp866ToCp1251[c-128];
-
-        }
-        toFile.put(c);
+    Analyzer *analyze;
+    analyze=new Analyzer;
+    codeTable code;
+    code=analyze->codeOfText("1.txt");
+    switch (code) {
+    case koi8r:
+        cout<<"it's koi8r";
+        break;
+    case cp1251:
+        cout<<"it's cp1251";
+        break;
+    case cp866:
+        cout<<"it's cp866";
+        break;
+    case NoOne:
+        cout<<"undefined format";
+        break;
+    default:
+        cout<<"somethig wrong";
+        break;
     }
 
 }

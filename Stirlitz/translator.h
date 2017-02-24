@@ -1,6 +1,6 @@
 #ifndef TRANSLATOR_H
 #define TRANSLATOR_H
-
+#include "analyzer.h"
 #include "codeTables.h"
 #include <string>
 using namespace std;
@@ -18,17 +18,14 @@ public:
         koi8r_cp866,
         koi8r_cp1251
     };
-    enum codeTable{
-        koi8r,
-        cp1251,
-        cp866
-    };
+
 
     bool ChangeCode(string sourceFile,TypeOfChange type);
 private:
-    int m_counter[128];
-    string m_sourceFile;
 //    Analyzer m_analyzer;
+    codeTable m_code;
+    string m_sourceFile;
+    Analyzer *m_analyzer;
     TypeOfChange m_type;
     string m_pathOfTransform;
 };

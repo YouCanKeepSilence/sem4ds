@@ -4,8 +4,10 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    translator.cpp
+    translator.cpp \
+    analyzer.cpp
 
 HEADERS += \
     codeTables.h \
-    translator.h
+    translator.h \
+    analyzer.h
