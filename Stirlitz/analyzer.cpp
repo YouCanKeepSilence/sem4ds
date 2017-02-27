@@ -16,7 +16,8 @@ codeTable Analyzer::codeOfText(string sourceFile)
     fromFile.open(sourceFile);
     if(!fromFile.is_open())
     {
-        std::cout<<"Не удалось открыть файл "<<sourceFile;for(int i=0;i<=128;i++)
+        std::cout<<"Не удалось открыть файл "<<sourceFile;
+        for(int i=0;i<=128;i++)
             m_counter[i]=0;
         return NoOne;
     }
@@ -25,8 +26,20 @@ codeTable Analyzer::codeOfText(string sourceFile)
     {
         unsigned char c;
         c=fromFile.get();
-        cout<<(int)c<<" "<<c<<std::endl;
+//        cout<<(int)c<<" "<<c<<std::endl;
         m_counter[c-128]++;
+    }
+    int result=0;
+    for(int i=0;i<=128;i++)
+        result+=m_counter[i];
+    for(int i=0;i<=128;i++)
+    {
+        char c;
+        c=i+128;
+        if(m_counter[i]!=0)
+        {   double proc=(double)m_counter[i]*100.00/(double)result;
+            cout<<(int)proc<<" "<<c<<endl;
+        }
     }
     for(int i=128;i<=175;i++)
         count866+=m_counter[i-128];

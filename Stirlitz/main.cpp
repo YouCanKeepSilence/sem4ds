@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
     Analyzer *analyze;
     analyze=new Analyzer;
     codeTable code;
-    code=analyze->codeOfText("1.txt");
+    code=analyze->codeOfText("D:/Projects/Work&Study/sem4ds/Stirlitz/1.txt");
     switch (code) {
     case koi8r:
         cout<<"it's koi8r";
