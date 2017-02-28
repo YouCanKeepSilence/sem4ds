@@ -3,15 +3,11 @@
 Translator::Translator()
 {
     m_sourceFile=m_pathOfTransform="";
-
-
 }
 
 bool Translator::ChangeCode(string sourceFile,TypeOfChange type)
 {
-//    int realNum=0;
     char c;
-//    codeTable now_code;
     m_sourceFile=sourceFile;
     ifstream fromFile;
     ofstream toFile;
