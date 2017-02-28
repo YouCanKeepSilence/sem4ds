@@ -9,6 +9,7 @@ class Analyzer
 public:
     Analyzer();
     codeTable codeOfText(std::string sourceFile);
+    bool isReadable();
 private:
     codeTable  m_code;
     int m_counter[128];
