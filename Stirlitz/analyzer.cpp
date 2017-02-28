@@ -46,7 +46,7 @@ codeTable Analyzer::codeOfText(string sourceFile)
         if(m_counter[i] != 0)
         {
             double proc=(double)m_counter[i]*100.00/(double)result;
-            cout<<(int)proc<<" "<<c<<endl;
+//            cout<<(int)proc<<" "<<c<<endl;
         }
     }
     for(int i = 128;i <= 175; i++)

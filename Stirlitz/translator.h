@@ -20,7 +20,7 @@ public:
     };
 
 
-    bool ChangeCode(string sourceFile,TypeOfChange type);
+    string ChangeCode(string sourceFile,TypeOfChange type);
 private:
 //    Analyzer m_analyzer;
     codeTable m_code;

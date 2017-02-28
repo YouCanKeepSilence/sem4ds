@@ -8,11 +8,27 @@ using namespace std;
 int main(int argc, char *argv[])
 {
     Analyzer *analyze;
+    Translator *translate;
+    translate=new Translator;
     analyze=new Analyzer;
     codeTable code;
+    string str;
     code=analyze->codeOfText("D:/Projects/Work&Study/sem4ds/Stirlitz/1.txt");
-
-    switch (code) {
+    analyze->isReadable();
+    str=translate->ChangeCode("D:/Projects/Work&Study/sem4ds/Stirlitz/1", (Translator::cp866_cp1251));
+    str=translate->ChangeCode(str, (Translator::cp1251_koi8r));
+    str=translate->ChangeCode(str, (Translator::koi8r_cp1251));
+    str=translate->ChangeCode(str, (Translator::cp1251_cp866));
+    str=translate->ChangeCode(str,Translator::cp866_cp1251);
+    str=translate->ChangeCode(str, (Translator::cp1251_koi8r));
+    str=translate->ChangeCode(str, (Translator::koi8r_cp1251));
+    str=translate->ChangeCode(str, (Translator::cp1251_cp866));
+    str=translate->ChangeCode(str, Translator::cp866_koi8r);
+    str=translate->ChangeCode(str,Translator::koi8r_cp866);
+    analyze->codeOfText(str+".txt");
+    analyze->isReadable();
+    switch (code)
+    {
     case koi8r:
         cout<<"it's koi8r";
         break;
