@@ -13,11 +13,11 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
     ifstream fromFile;
     ofstream toFile;
     fromFile.open(m_sourceFile);
-    static string saveName;
+    string saveName=sourceFile;
     switch (type)
     {
     case cp866_cp1251:
-        saveName+="cp866_cp1251_";
+        saveName+="-(cp866_cp1251)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {
@@ -31,7 +31,7 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
         break;
 
     case cp1251_cp866:
-        saveName+="cp1251_cp866_";
+        saveName+="-(cp1251_cp866)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {
@@ -39,16 +39,13 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
            if(c >= 128)
                 c=Cp1251ToCp866[(int)c-128];
            if(fromFile.eof())
-           {
                break;
-               std::cout<<"it's EOF"<<(int)c<<endl;
-           }
            toFile.put(c);
         }
         break;
 
     case cp866_koi8r:
-        saveName+="cp866_koi8r_";
+        saveName+="-(cp866_koi8r)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {
@@ -63,7 +60,7 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
         break;
 
     case koi8r_cp866:
-        saveName+="koi8r_cp866_";
+        saveName+="-(koi8r_cp866)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {
@@ -78,7 +75,7 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
         break;
 
     case cp1251_koi8r:
-        saveName+="cp1251_koi8r_";
+        saveName+="-(cp1251_koi8r)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {
@@ -92,7 +89,7 @@ string Translator::ChangeCode(string sourceFile,TypeOfChange type)
         break;
 
     case koi8r_cp1251:
-        saveName+="koi8r_cp1251_";
+        saveName+="-(koi8r_cp1251)";
         toFile.open(saveName+".txt");
         while(!fromFile.eof())
         {

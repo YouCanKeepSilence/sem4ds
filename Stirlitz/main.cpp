@@ -2,6 +2,7 @@
 #include <fstream>
 #include "translator.h"
 #include "analyzer.h"
+#include <vector>
 using namespace std;
 
 
@@ -11,35 +12,65 @@ int main(int argc, char *argv[])
     Translator *translate;
     translate=new Translator;
     analyze=new Analyzer;
-    string source;
-    string str;
-    while(!analyze->isReadable())
+    string source="D:/Projects/Work&Study/sem4ds/Stirlitz/3";
+    string str,str1,str2;
+    vector<string> vec;
+//    str=translate->ChangeCode(source,Translator::koi8r_cp1251);
+//    str=translate->ChangeCode(str,Translator::koi8r_cp866);
+//    str=translate->ChangeCode(str,(Translator::cp1251_cp866));
+
+    for(int n=0;n<=3;n++)
     {
         for(int i=0;i<=5;i++)
         {
             str=translate->ChangeCode(source,(Translator::TypeOfChange)i);
+            analyze->codeOfText(str+".txt");
             if(analyze->isReadable())
-                vreak;
-            for()
+            {
+                cout<<str<<endl;
+                rename((str+".txt").c_str(),"result.txt");
+                return 1;
+                break;
+            }
+            vec.push_back(str+".txt");
+            for(int j=0;j<=5;j++)
+            {
+                str1=translate->ChangeCode(str,(Translator::TypeOfChange)j);
+                analyze->codeOfText(str1+".txt");
+                if(analyze->isReadable())
+                {
+                    cout<<str1<<endl;
+                    rename((str1+".txt").c_str(),"result.txt");
+                    return 1;
+                    break;
+                }
+                vec.push_back(str1+".txt");
+                for(int k=0;k<=5;k++)
+                {
+                    str2=translate->ChangeCode(str1,(Translator::TypeOfChange)k);
+                    analyze->codeOfText(str2+".txt");
+                    if(analyze->isReadable())
+                    {
+                        cout<<str2<<endl;
+                        rename((str2+".txt").c_str(),"D:/Projects/Work&Study/sem4ds/Stirlitz/result.txt");
+                        for(int c=0;c<=vec.size();c++)
+                        {
+                            remove(vec[c].c_str());
+                        }
+                        return 1;
+                        break;
+                    }
+                    vec.push_back(str2+".txt");
+                }
+
+
+            }
         }
     }
-//    switch (code)
-//    {
-//    case koi8r:
-//        cout<<"it's koi8r";
-//        break;
-//    case cp1251:
-//        cout<<"it's cp1251";
-//        break;
-//    case cp866:
-//        cout<<"it's cp866";
-//        break;
-//    case NoOne:
-//        cout<<"undefined format";
-//        break;
-//    default:
-//        cout<<"somethig wrong";
-//        break;
-//    }
+    for(int c=0;c<=vec.size();c++)
+    {
+        remove(vec[c].c_str());
+    }
+    cout<<"Все плохо. Текст не внятен или глубина больше 3"<<endl;
 
 }
