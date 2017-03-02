@@ -48,12 +48,10 @@ codeTable Analyzer::codeOfText(string sourceFile)
     {
         char c;
         c=i+128;
-        if(m_counter[i] != 0)
-        {
-            double proc=(double)m_counter[i]*100.00/(double)result;
-//            cout.precision(0);
-            cout<<proc<<" "<<c<<endl;
-        }
+//        if(m_counter[i] != 0)
+//        {
+//            double proc=(double)m_counter[i]*100.00/(double)result;
+//        }
     }
     for(int i = 128;i <= 175; i++)
         count866 += m_counter[i-128];
