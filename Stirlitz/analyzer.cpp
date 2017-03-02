@@ -1,12 +1,19 @@
 #include "analyzer.h"
 #include <fstream>
 #include <iostream>
+#include <cmath>
 Analyzer::Analyzer()
 {
     for(int i=0; i <= 128; i++)
         m_counter[i] = 0;
     m_code = NoOne;
 
+}
+
+void Analyzer::resetCounters()
+{
+    for(int i=0; i <= 128; i++)
+        m_counter[i] = 0;
 }
 
 codeTable Analyzer::codeOfText(string sourceFile)
@@ -21,8 +28,6 @@ codeTable Analyzer::codeOfText(string sourceFile)
     if(!fromFile.is_open())
     {
         std::cout<<"Не удалось открыть файл "<<sourceFile;
-        for(int i = 0; i<= 128; i++)
-            m_counter[i] = 0;
         m_code = NoOne;
         return NoOne;
     }
@@ -46,7 +51,8 @@ codeTable Analyzer::codeOfText(string sourceFile)
         if(m_counter[i] != 0)
         {
             double proc=(double)m_counter[i]*100.00/(double)result;
-//            cout<<(int)proc<<" "<<c<<endl;
+//            cout.precision(0);
+            cout<<proc<<" "<<c<<endl;
         }
     }
     for(int i = 128;i <= 175; i++)

@@ -11,6 +11,7 @@ public:
     codeTable codeOfText(std::string sourceFile);
     bool isReadable();
 private:
+    void resetCounters();
     codeTable  m_code;
     int m_counter[128];
 };

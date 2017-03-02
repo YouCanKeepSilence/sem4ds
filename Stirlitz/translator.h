@@ -22,6 +22,7 @@ public:
 
     string ChangeCode(string sourceFile,TypeOfChange type);
 private:
+
 //    Analyzer m_analyzer;
     codeTable m_code;
     string m_sourceFile;
