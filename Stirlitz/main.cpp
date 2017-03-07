@@ -12,7 +12,8 @@ int main(int argc, char *argv[])
     Translator *translate;
     translate=new Translator;
     analyze=new Analyzer;
-    string source="D:/Projects/Work&Study/sem4ds/Stirlitz/3";
+//    string source="D:/Projects/Work&Study/sem4ds/Stirlitz/3";
+    string source="/Users/silence/Workbench/Bondin/sem4ds/build-stirlitz-Desktop_Qt_5_7_0_clang_64bit-Debug/31";
     string str,str1,str2;
     vector<string> vec;
 //    str=translate->ChangeCode(source,Translator::koi8r_cp1251);
@@ -29,7 +30,7 @@ int main(int argc, char *argv[])
             {
                 cout<<str<<endl;
                 rename((str+".txt").c_str(),"result.txt");
-                return 1;
+                return 0;
                 break;
             }
             vec.push_back(str+".txt");
@@ -41,7 +42,7 @@ int main(int argc, char *argv[])
                 {
                     cout<<str1<<endl;
                     rename((str1+".txt").c_str(),"result.txt");
-                    return 1;
+                    return 0;
                     break;
                 }
                 vec.push_back(str1+".txt");
@@ -52,12 +53,12 @@ int main(int argc, char *argv[])
                     if(analyze->isReadable())
                     {
                         cout<<str2<<endl;
-                        rename((str2+".txt").c_str(),"D:/Projects/Work&Study/sem4ds/Stirlitz/result.txt");
+                        rename((str2+".txt").c_str(),"/Users/silence/Workbench/Bondin/sem4ds/build-stirlitz-Desktop_Qt_5_7_0_clang_64bit-Debug/result.txt");
                         for(int c=0;c<=vec.size();c++)
                         {
                             remove(vec[c].c_str());
                         }
-                        return 1;
+                        return 0;
                         break;
                     }
                     vec.push_back(str2+".txt");

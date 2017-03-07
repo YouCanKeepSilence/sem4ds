@@ -8,17 +8,6 @@ enum codeTable{
     NoOne
 };
 
-static const unsigned char frequentChar[18] ={
-//  cp1251
-//   О  \\ о  \\ А  \\ а  \\ Е  \\ е
-    0xce, 0xee, 0xc0, 0xe0, 0xc5, 0xe5,
-//  cp866
-//   О  \\ о  \\ А  \\ а  \\ Е  \\ е
-    0x8e, 0xae, 0x80, 0xa0, 0x85, 0xa5,
-//  KOI 8 r
-//   О  \\ о  \\ А  \\ а  \\ Е  \\ е
-    0xef, 0xcf, 0xe1, 0xc1, 0xe5, 0xc5
-};
 
 static const unsigned char Cp1251ToCp866[128] = {
 
