@@ -4,7 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    nstack.cpp
+    nstack.cpp \
+    nqueue.cpp \
+    lecsema.cpp
 
 HEADERS += \
-    nstack.h
+    nstack.h \
+    nqueue.h \
+    lecsema.h
