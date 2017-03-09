@@ -4,6 +4,8 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
+    system("clear");
+    double z=(char)'*';
+    cout<<z;
     return 0;
 }
