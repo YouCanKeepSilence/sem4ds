@@ -7,7 +7,7 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    cout << "Hello World!" << endl;
+    system("clear");
     Lecsema * p;
     NQueue * queue;
     Number * n;
@@ -17,16 +17,31 @@ int main(int argc, char *argv[])
     n=new Number;
     n->setNum(2.28);
     p=dynamic_cast<Lecsema*>(n);
-    queue=new NQueue(p);
+    if(p)
+    {
+        queue=new NQueue(p);
+        cout<<"first add "<<n->getNum()<<endl;
+    }
     p=dynamic_cast<Lecsema*>(n1);
-    queue->AddToQueue(p);
+    if(p)
+    {
+        queue->AddToQueue(p);
+        cout<<"second add "<<n1->getNum()<<endl;
+    }
     p=nullptr;
     n=nullptr;
     p=queue->GetFromQueue();
     n=dynamic_cast<Number*>(p);
-    cout<<"Hi"<<n->getNum()<<endl;
+    if(n)
+        cout<<"first out "<<n->getNum()<<endl;
+    p=nullptr;
     p=queue->GetFromQueue();
-    n=dynamic_cast<Number*>(p);
-    cout<<n->getNum();
+    n1=dynamic_cast<Number*>(p);
+    if(n1!=nullptr)
+    {
+        cout<<"second out  "<<n1->getNum()<<endl;
+    }
+    p=queue->GetFromQueue();
+
     return 0;
 }

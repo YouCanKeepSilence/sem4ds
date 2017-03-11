@@ -6,14 +6,17 @@
 class NQueue
 {
 public:
-    NQueue(Lecsema *data=nullptr);
+    NQueue(Lecsema *data=nullptr, int size=1024);
     void AddToQueue(Lecsema *data);
-    Lecsema * GetFromQueue(bool &isOver);
+    Lecsema * GetFromQueue();
+
 private:
-    NQueue * p_current;
-    NQueue * p_next;
-    NQueue * p_first;
-    Lecsema *m_data;
+    int m_indexOfFirst;
+    int m_indexOfLast;
+    int m_realsize;
+    int m_size;
+    Lecsema ** m_data;
+
 };
 
 #endif // NQUEUE_H

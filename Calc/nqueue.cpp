@@ -1,60 +1,51 @@
 #include "nqueue.h"
-
+#include <iostream>
 using namespace std;
 
-NQueue::NQueue(Lecsema * data)
+NQueue::NQueue(Lecsema *data, int size)
 {
-    static bool state=false;
-    if(!state)
+    m_size=size;
+    Lecsema *mass[size];
+    m_realsize=0;
+    for(int i=0;i<size;i++)
     {
-        p_first=this;
-        state=true;
+        mass[i]=nullptr;
     }
-    p_next=nullptr;
-    m_data=data;
-    p_current=p_first;
+    if(data)
+    {
+        m_indexOfFirst=0;
+        m_indexOfLast=0;
+        mass[0]=data;
+        m_realsize++;
+    }
+    m_data=mass;
 }
 
 void NQueue::AddToQueue(Lecsema *data)
 {
-    if(m_data==nullptr)
+    if(m_indexOfLast+1<=m_size)
     {
-        m_data=data;
-        p_next=nullptr;
+        m_indexOfLast++;
+        m_data[m_indexOfLast]=data;
+        m_realsize++;
     }
     else
     {
-        while(p_current->p_next!=nullptr)
-        {
-            p_current=p_next;
-        }
-        p_current->p_next=new NQueue(data);
-
+        cout<<"Превышен размер массива"<<endl;
+        return;
     }
 }
 
-Lecsema * NQueue::GetFromQueue(bool &isOver)
+Lecsema * NQueue::GetFromQueue()
 {
-    p_current=p_first;
-    NQueue * p_buf;
-    Lecsema * bufdata;
-    if(p_current->p_next==nullptr)
+    Lecsema * forData;
+    if(m_realsize<=0)
     {
-        bufdata = p_current->m_data;
-        delete p_current;
-        isOver=true;
-        return bufdata;
+        cout<<"Массив пуст"<<endl;
+        return nullptr;
     }
-    while(p_current->p_next!=nullptr)
-    {
-        p_buf=p_current;
-        p_current=p_next;
-    }
-    p_buf->p_next=nullptr;
-    bufdata=p_current->m_data;
-    delete p_current;
-    isOver=false;
-    return bufdata;
-
-
+    forData=m_data[m_indexOfFirst];
+    m_indexOfFirst++;
+    m_realsize--;
+    return forData;
 }
