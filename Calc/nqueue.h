@@ -7,10 +7,11 @@ class NQueue
 {
 public:
     NQueue(Lecsema *data=nullptr, int size=1024);
-    void AddToQueue(Lecsema *data);
-    Lecsema * GetFromQueue();
+    void add(Lecsema *data);
+    Lecsema * get();
 
 private:
+    Lecsema **replace();
     int m_indexOfFirst;
     int m_indexOfLast;
     int m_realsize;

@@ -24,8 +24,11 @@ class Operand : public Lecsema
 public:
     Operand(char sim=0);
     char getSim();
+    int getPriority();
     void setSim(char sim);
+    void setPriority(int priority);
 private:
+    int m_prioriry;
     char m_sim;
 };
 
