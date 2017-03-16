@@ -22,6 +22,7 @@ private:
 class Operand : public Lecsema
 {
 public:
+    static bool analyzeChar(char c, bool &minus, bool &space, bool &point, int &priority);
     Operand(char sim=0);
     char getSim();
     int getPriority();

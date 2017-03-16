@@ -20,7 +20,7 @@ int main(int argc, char *argv[])
 //    str=translate->ChangeCode(str,Translator::koi8r_cp866);
 //    str=translate->ChangeCode(str,(Translator::cp1251_cp866));
 
-    for(int n=0;n<=3;n++)
+   for(int n=0;n<=3;n++)
     {
         for(int i=0;i<=5;i++)
         {

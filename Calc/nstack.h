@@ -5,7 +5,7 @@
 class NStack
 {
 public:
-    NStack(Lecsema * data=nullptr, int size=1024);
+    NStack(int size=1024, Lecsema *data=nullptr);
     void add(Lecsema * data);
     Lecsema * get();
     Lecsema * cherryPick();

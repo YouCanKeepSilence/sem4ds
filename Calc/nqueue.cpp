@@ -4,7 +4,7 @@
 using namespace std;
 
 
-NQueue::NQueue(Lecsema *data, int size)
+NQueue::NQueue( int size,Lecsema *data)
 {
     m_size=size;
     m_data=new Lecsema* [size];

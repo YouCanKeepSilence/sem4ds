@@ -1,7 +1,7 @@
 #include "nstack.h"
 #include <iostream>
 using namespace std;
-NStack::NStack(Lecsema * data, int size)
+NStack::NStack(int size, Lecsema * data)
 {
     m_size=size;
     m_data=new Lecsema* [size];
