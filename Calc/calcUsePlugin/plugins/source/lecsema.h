@@ -1,5 +1,7 @@
 #ifndef LECSEMA_H
 #define LECSEMA_H
+#include <cstddef>
+
 
 
 class Lecsema

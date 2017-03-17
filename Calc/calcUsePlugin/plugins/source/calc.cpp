@@ -347,18 +347,18 @@ double calc(const char * str , int * status)
     return calculate(queue,status);
 }
 
-int main(int argc, char *argv[])
-{
-    system("clear");
-    int *status = new int();
-    string str="-2+2*2 -    (1+1+1+1+1)";
-    char* pstr = (char*)str.c_str();
-    double b=calc(pstr,status);
-    if(*status==0)
-        cout<<"Концовочка "<<b<<endl;
-    else
-    {
-        cout<<"ГРОМКАЯ БРАНЬ!!!"<<endl;
-    }
-
-}
+//int main(int argc, char *argv[])
+//{
+//    system("clear");
+//    int *status = new int();
+//    string str="-2+2*2 -    (1+1+1+1+1)";
+//    char* pstr = (char*)str.c_str();
+//    double b=calc(pstr,status);
+//    if(*status==0)
+//        cout<<"Концовочка "<<b<<endl;
+//    else
+//    {
+//        cout<<"ГРОМКАЯ БРАНЬ!!!"<<endl;
+//    }
+//
+//}
