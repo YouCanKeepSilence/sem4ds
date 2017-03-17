@@ -8,7 +8,7 @@ NStack::NStack(int size, Lecsema * data)
     m_realsize=0;
     for(int i=0;i<size;i++)
     {
-        m_data[i]=nullptr;
+        m_data[i]=NULL;
     }
     m_indexOfFirst=-1;
     m_indexOfLast=-1;
@@ -28,7 +28,7 @@ Lecsema ** NStack::replace()
     if(!m_data)
     {
         cout<<"Шеф, у нас проблемы с перевыделением памяти"<<endl;
-        return nullptr;
+        return NULL;
     }
     return m_data;
 
@@ -39,7 +39,7 @@ Lecsema * NStack::cherryPick()
     if(m_indexOfLast!=-1)
         return m_data[m_indexOfLast];
     else
-        return nullptr;
+        return NULL;
 }
 
 void NStack::add(Lecsema *data)
@@ -77,16 +77,16 @@ Lecsema * NStack::get()
     if(m_indexOfFirst==-1)
     {
         cout<<"Ошибка, стек пуст."<<endl;
-        return nullptr;
+        return NULL;
     }
     Lecsema * forData;
     if(m_realsize<=0)
     {
         cout<<"Массив пуст"<<endl;
-        return nullptr;
+        return NULL;
     }
     forData=m_data[m_indexOfLast];
-    m_data[m_indexOfLast]=nullptr;
+    m_data[m_indexOfLast]=NULL;
     m_indexOfLast--;
     m_realsize--;
     if(m_realsize==0)
@@ -94,7 +94,7 @@ Lecsema * NStack::get()
         m_indexOfFirst=-1;
         m_indexOfLast=-1;
         delete [] m_data;
-        m_data=nullptr;
+        m_data=NULL;
         m_size=0;
         cout<<"Конец"<<endl;
 

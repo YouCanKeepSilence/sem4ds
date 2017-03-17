@@ -11,7 +11,7 @@ NQueue::NQueue( int size,Lecsema *data)
     m_realsize=0;
     for(int i=0;i<size;i++)
     {
-        m_data[i]=nullptr;
+        m_data[i]=NULL;
     }
     m_indexOfFirst=-1;
     m_indexOfLast=-1;
@@ -32,7 +32,7 @@ Lecsema ** NQueue::replace()
     if(!m_data)
     {
         cout<<"Шеф, у нас проблемы с перевыделением памяти"<<endl;
-        return nullptr;
+        return NULL;
     }
     return m_data;
 }
@@ -74,16 +74,16 @@ Lecsema * NQueue::get()
     if(m_indexOfFirst==-1)
     {
         cout<<"Ошибка, очередь пуста."<<endl;
-        return nullptr;
+        return NULL;
     }
     Lecsema * forData;
     if(m_realsize<=0)
     {
         cout<<"Массив пуст"<<endl;
-        return nullptr;
+        return NULL;
     }
     forData=m_data[m_indexOfFirst];
-    m_data[m_indexOfFirst]=nullptr;
+    m_data[m_indexOfFirst]=NULL;
     m_indexOfFirst++;
     m_realsize--;
     if(m_realsize==0)
@@ -91,7 +91,7 @@ Lecsema * NQueue::get()
         m_indexOfFirst=-1;
         m_indexOfLast=-1;
         delete [] m_data;
-        m_data=nullptr;
+        m_data=NULL;
         m_size=0;
         cout<<"Конец"<<endl;
 

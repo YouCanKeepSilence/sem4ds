@@ -50,7 +50,7 @@ void Operand::setPriority(int priority)
     }
     m_prioriry=priority;
 }
-
+// 228.322
 bool Operand::analyzeChar(char c, bool &minus, bool &space,bool &point, int &priority)
 {
     char definedChar=false;
@@ -67,6 +67,7 @@ bool Operand::analyzeChar(char c, bool &minus, bool &space,bool &point, int &pri
         {
         case '.':
             definedChar=true;
+            point=true;
             space=false;
             priority=-1;
             break;

@@ -63,7 +63,7 @@ double calc(const char * str , int * status)
 
     for(int i=0; i<=expression.length()-1; i++)
     {
-        char c=str[i];
+        char c=str[i];//stream.peek если число то считать из потока число иначе символ кидать в элс. минус привязать к числу только в начале строки и после открывающей скобки.
         if(isdigit(c))
         {
             if(space && wasDigit)
@@ -77,6 +77,10 @@ double calc(const char * str , int * status)
                 bufstr<<c;
 
 
+            }
+            if(point)//12*(-1)
+            {
+                bufstr<<"."<<c;
             }
             wasDigit=true;
             cout<<c<<endl;
