@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
     Translator *translate;
     translate=new Translator;
     analyze=new Analyzer;
-//    string source="D:/Projects/Work&Study/sem4ds/Stirlitz/3";
-    string source="/Users/silence/Workbench/Bondin/sem4ds/build-stirlitz-Desktop_Qt_5_7_0_clang_64bit-Debug/31";
+    string source="D:/Projects/Work&Study/sem4ds/Stirlitz/3";
+//    string source="/Users/silence/Workbench/Bondin/sem4ds/build-stirlitz-Desktop_Qt_5_7_0_clang_64bit-Debug/31";
     string str,str1,str2;
     vector<string> vec;
 //    str=translate->ChangeCode(source,Translator::koi8r_cp1251);
