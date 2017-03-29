@@ -9,7 +9,11 @@ BinTree::BinTree(int weight, unsigned char *symbol, BinTree *parent)
     m_rightChild=NULL;
     m_weight=weight;
     m_symbol=symbol;
+}
 
+BinTree::~BinTree()
+{
+    delete m_symbol;
 }
 
 BinTree*
@@ -22,6 +26,12 @@ BinTree*
 BinTree::toParent()
 {
     return m_parent;
+}
+
+void
+BinTree::setParent(BinTree *parent)
+{
+    m_parent=parent;
 }
 
 void
@@ -42,8 +52,9 @@ BinTree::getWeight()
     return m_weight;
 }
 void
-BinTree::addChild(BinTree *child, bool direction)
+BinTree::addChild(BinTree *child,BinTree * parent, bool direction)
 {
+    child->setParent(parent);
     direction ? m_rightChild=child : m_leftChild=child;
 }
 

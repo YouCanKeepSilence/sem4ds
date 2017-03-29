@@ -1,12 +1,12 @@
 #include <iostream>
 #include "bintree.h"
-
+#include <deque>
 #include <vector>
 using namespace std;
-BinTree* createHuffTree(vector<BinTree*>& trees)
+BinTree* createHuffTree(deque<BinTree*>& trees)
 {
     BinTree * root;
-    vector<BinTree*>::iterator index;
+    deque<BinTree*>::iterator index;
     unsigned char * bufchar=NULL;
     while(1)
     {
@@ -17,38 +17,81 @@ BinTree* createHuffTree(vector<BinTree*>& trees)
         {
 
             int bufsize;
-            BinTree * buf;
-            bufsize = (trees[0])->getWeight();
+            bufsize = (trees.front())->getWeight();
             index=trees.begin();
-            for(vector<BinTree*>::iterator i=trees.begin();i<trees.end();i++)
+            for(deque<BinTree*>::iterator i=trees.begin();i<trees.end();i++)
             {
-
-                buf=*i;
-                if(bufsize>buf->getWeight() && *bufchar!=*(buf->getSymbol()))
+                if(bufsize>(*i)->getWeight())
                 {
+                    if(bufchar)
+                    {
+                        if(*bufchar = *((*i)->getSymbol()))
+                        {
+                            continue;
+                        }
+                    }
                     index = i;
-                    bufsize=buf->getWeight();
-                    bufchar=buf->getSymbol();
+                    bufsize=(*i)->getWeight();
+                    bufchar=(*i)->getSymbol();
                 }
             }
-//            cout<<"tut"<<endl;
-//            buf=*index;
-//            cout<<buf->getWeight()<<endl;
-//            cout<<"tut1"<<endl;
-            root->addChild(bufsize,bufchar,j);
-//            cout<<"tut2"<<endl;
+            root->addChild(*index,root,j);
             trees.erase(index);
-
             weight+=bufsize;
-//            cout<<"tut3";
         }
         root->setWeight(weight);
-        trees.emplace(trees.begin(),root);
-        if(trees.size()==1)
+        trees.push_front(root);
+        if(trees.size()==0)
             break;
 
     }
     return root;
+}
+bool checkChar(unsigned char& symbol, BinTree * root)
+{
+    if(root)
+    {
+        if(root->getSymbol())
+        {
+            if(symbol==*(root->getSymbol()))
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+string findChar(unsigned char symbol,BinTree * root)
+{
+    string way;
+    while(1)
+    {
+        if(!root->toChild(0))
+        {
+            break;
+        }
+        root=root->toChild(0);
+        way.push_back(0);
+    }
+//    root=root->toChild(0);
+    while(1)
+    {
+        if(checkChar(symbol,root))
+        {
+            return way;
+        }
+        if(root->toChild(1))
+        {
+            root=root->toChild(1);
+        }
+        else
+        {
+            root=root->toParent();
+            way.pop_back();
+        }
+    }
+    return way;
 }
 
 int main(int argc, char *argv[])
@@ -58,7 +101,7 @@ int main(int argc, char *argv[])
         cout<<"Не введено имя входного файла"<<endl;
         return 0;
     }
-    vector<BinTree*> trees;
+    deque<BinTree*> trees;
     BinTree * root;
     string filename=argv[1];
     int * symbols = new int[256];
@@ -70,9 +113,9 @@ int main(int argc, char *argv[])
         BinTree * tree = new BinTree(symbols[i], c);
         trees.push_back(tree);
     }
-//    trees.erase(trees.begin());
 
     root=createHuffTree(trees);
+    cout<<"result "<<findChar(32,root)<<endl;
     cout<<"end"<<endl;
     return 1;
 }
