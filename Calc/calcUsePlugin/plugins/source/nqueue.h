@@ -6,7 +6,7 @@
 class NQueue
 {
 public:
-    NQueue(int size=1024, Lecsema *data=nullptr);
+    NQueue(int size=1024, Lecsema * data = NULL);
     void add(Lecsema *data);
     Lecsema * get();
     int length();
