@@ -19,13 +19,13 @@ BinTree* createHuffTree(deque<BinTree*>& trees)
             int bufsize;
             bufsize = (trees.front())->getWeight();
             index=trees.begin();
-            for(deque<BinTree*>::iterator i=trees.begin();i<trees.end();i++)
+            for(deque<BinTree*>::iterator i=trees.begin(); i != trees.end(); ++i)
             {
                 if(bufsize>(*i)->getWeight())
                 {
                     if(bufchar)
                     {
-                        if(*bufchar = *((*i)->getSymbol()))
+                        if(*bufchar == *((*i)->getSymbol()))
                         {
                             continue;
                         }
@@ -74,28 +74,46 @@ string findChar(unsigned char symbol,BinTree * root)
         root=root->toChild(0);
         way.push_back(0);
     }
-//    root=root->toChild(0);
+    char c=-1;
     while(1)
     {
-        if(checkChar(symbol,root))
+        if(c==1)
         {
-            return way;
+            c=way[way.length()-1];
+            way.pop_back();
+            root=root->toParent();
         }
-        if(root->toChild(1))
+        else if(root->toChild(0) && c!=0)
         {
+            c=-1;
+            root=root->toChild(0);
+            way.push_back(0);
+        }
+        else if(root->toChild(1) && c!=1)
+        {
+            c=-1;
             root=root->toChild(1);
+            way.push_back(1);
         }
         else
         {
-            root=root->toParent();
+            if(checkChar(symbol,root))
+            {
+                return way;
+            }
+            c=way[way.length()-1];
             way.pop_back();
+            root=root->toParent();
+            //Брать последний символ строки. не тут . выше
         }
+
     }
     return way;
 }
 
 int main(int argc, char *argv[])
 {
+    system("clear");
     if(argc!=2)
     {
         cout<<"Не введено имя входного файла"<<endl;
@@ -115,6 +133,7 @@ int main(int argc, char *argv[])
     }
 
     root=createHuffTree(trees);
+    cout<<"qq"<<endl;
     cout<<"result "<<findChar(32,root)<<endl;
     cout<<"end"<<endl;
     return 1;
