@@ -2,18 +2,18 @@
 #include <fstream>
 #include <iostream>
 using namespace std;
-BinTree::BinTree(int weight, unsigned char *symbol, BinTree *parent)
+BinTree::BinTree(int weight, unsigned char symbol, BinTree *parent)
 {
     m_parent=parent;
     m_leftChild=NULL;
     m_rightChild=NULL;
     m_weight=weight;
     m_symbol=symbol;
+    id=symbol;
 }
 
 BinTree::~BinTree()
 {
-    delete m_symbol;
 }
 
 BinTree*
@@ -35,13 +35,12 @@ BinTree::setParent(BinTree *parent)
 }
 
 void
-BinTree::addChild(int weight, unsigned char *symbol, bool direction)
+BinTree::addChild(int weight, unsigned char symbol, bool direction)
 {
     direction ? m_rightChild=new BinTree(weight,symbol, this) : m_leftChild=new BinTree(weight,symbol,this);
 }
 
-unsigned char*
-BinTree::getSymbol()
+unsigned char BinTree::getSymbol()
 {
     return m_symbol;
 }
@@ -51,11 +50,24 @@ BinTree::getWeight()
 {
     return m_weight;
 }
+
+void
+BinTree::recalcWeight()
+{
+
+    if(m_leftChild && m_rightChild)
+    {
+        m_weight = m_leftChild->m_weight + m_rightChild->m_weight;
+    }
+
+}
+
 void
 BinTree::addChild(BinTree *child,BinTree * parent, bool direction)
 {
     child->setParent(parent);
-    direction ? m_rightChild=child : m_leftChild=child;
+    direction ? parent->m_rightChild=child : parent->m_leftChild=child;
+//    parent->recalcWeight();
 }
 
 void
@@ -67,6 +79,7 @@ BinTree::setWeight(int weight)
 void
 BinTree::countSymbols(int *symbols, string filename)
 {
+    int counter=0;
     ifstream fromFile;
     fromFile.open(filename);
     if(!fromFile.is_open())
@@ -84,8 +97,10 @@ BinTree::countSymbols(int *symbols, string filename)
         c=fromFile.get();
         if(fromFile.eof())
         {
+            cout<<counter<<endl;
             break;
         }
+        counter++;
         symbols[(int)c]++;
     }
 }

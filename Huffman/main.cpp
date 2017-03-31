@@ -1,48 +1,52 @@
 #include <iostream>
 #include "bintree.h"
 #include <deque>
+#include <stack>
 #include <vector>
+#include <sstream>
+#include <queue>
+#include <list>
 using namespace std;
-BinTree* createHuffTree(deque<BinTree*>& trees)
+
+BinTree* createHuffTree(list<BinTree*>& trees)
 {
     BinTree * root;
-    deque<BinTree*>::iterator index;
-    unsigned char * bufchar=NULL;
+    list<BinTree*>::iterator i;
     while(1)
     {
-        int weight;
-        weight = 0;
-        root = new BinTree();
-        for(int j=0; j<2 ; j++)
-        {
+        list<BinTree*>::iterator first = trees.begin();
+        list<BinTree*>::iterator second = trees.begin();
 
-            int bufsize;
-            bufsize = (trees.front())->getWeight();
-            index=trees.begin();
-            for(deque<BinTree*>::iterator i=trees.begin(); i != trees.end(); ++i)
-            {
-                if(bufsize>(*i)->getWeight())
-                {
-                    if(bufchar)
-                    {
-                        if(*bufchar == *((*i)->getSymbol()))
-                        {
-                            continue;
-                        }
-                    }
-                    index = i;
-                    bufsize=(*i)->getWeight();
-                    bufchar=(*i)->getSymbol();
-                }
-            }
-            root->addChild(*index,root,j);
-            trees.erase(index);
-            weight+=bufsize;
+        if(first==second)
+        {
+            second++;
         }
+        for( i=trees.begin(); i != trees.end(); ++i)
+        {
+            if(((*second)->getWeight() > (*i)->getWeight()) && (i != first) )
+            {
+                second = i;
+            }
+        }
+        root = new BinTree();
+        root->addChild(*first,root,0);
+        root->addChild(*second,root,1);
+
+        int weight=(*first)->getWeight() + (*second)->getWeight();
+
         root->setWeight(weight);
+
+        trees.erase(first);
+        trees.erase(second);
+//        trees.insert(trees.begin(),root);
         trees.push_front(root);
-        if(trees.size()==0)
+
+        if(trees.size()==1)
+        {
+            root=trees.front();
+            cout<<root->getWeight()<<endl;
             break;
+        }
 
     }
     return root;
@@ -51,64 +55,55 @@ bool checkChar(unsigned char& symbol, BinTree * root)
 {
     if(root)
     {
-        if(root->getSymbol())
+        if(symbol==root->getSymbol())
         {
-            if(symbol==*(root->getSymbol()))
-            {
-                return true;
-            }
+            return true;
         }
+
     }
     return false;
 }
 
-string findChar(unsigned char symbol,BinTree * root)
+
+void createEncoding(vector<string>& symbolsEncoding, BinTree * root)
 {
-    string way;
+    stringstream way;
+    string bufway;
+    if(!root->toChild(0) && !root->toChild(1))
+    {
+        cout<<"Дерево не имеет детей"<<endl;
+        exit(1);
+    }
+    char c=0;
     while(1)
     {
-        if(!root->toChild(0))
+        if(bufway.length()==1 && bufway.back()=='1' && root->toParent() == NULL)
         {
+            cout<<"Дерево пройдено"<<endl;
             break;
         }
-        root=root->toChild(0);
-        way.push_back(0);
-    }
-    char c=-1;
-    while(1)
-    {
-        if(c==1)
+        if((!root->toChild(0) && !root->toChild(1)) || c=='1')
         {
-            c=way[way.length()-1];
-            way.pop_back();
+            cout<<"leave "<<endl;
+            symbolsEncoding[root->getSymbol()]=bufway;
+            c=bufway.back();
+            bufway.pop_back();
             root=root->toParent();
         }
-        else if(root->toChild(0) && c!=0)
+        else if(root->toChild(0) && c!='0')
         {
-            c=-1;
             root=root->toChild(0);
-            way.push_back(0);
+            bufway.push_back('0');
+            continue;
         }
-        else if(root->toChild(1) && c!=1)
+        else if(root->toChild(1) && c!='1')
         {
-            c=-1;
             root=root->toChild(1);
-            way.push_back(1);
+            bufway.push_back('1');
+            continue;
         }
-        else
-        {
-            if(checkChar(symbol,root))
-            {
-                return way;
-            }
-            c=way[way.length()-1];
-            way.pop_back();
-            root=root->toParent();
-            //Брать последний символ строки. не тут . выше
-        }
-
     }
-    return way;
+
 }
 
 int main(int argc, char *argv[])
@@ -119,7 +114,7 @@ int main(int argc, char *argv[])
         cout<<"Не введено имя входного файла"<<endl;
         return 0;
     }
-    deque<BinTree*> trees;
+    list<BinTree*> trees;
     BinTree * root;
     string filename=argv[1];
     int * symbols = new int[256];
@@ -127,14 +122,17 @@ int main(int argc, char *argv[])
 
     for(int i=0; i<256; i++)
     {
-        unsigned char * c = new unsigned char(i);
-        BinTree * tree = new BinTree(symbols[i], c);
+        BinTree * tree = new BinTree(symbols[i], i);
         trees.push_back(tree);
     }
 
     root=createHuffTree(trees);
     cout<<"qq"<<endl;
-    cout<<"result "<<findChar(32,root)<<endl;
+
+    vector<string> strmass;
+    strmass.reserve(256);
+
+    createEncoding(strmass,root);
     cout<<"end"<<endl;
     return 1;
 }
