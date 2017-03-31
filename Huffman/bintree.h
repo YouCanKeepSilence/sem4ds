@@ -23,7 +23,6 @@ public:
 
     static void countSymbols(int * symbols, std::string filename);
 private:
-    int id;
     BinTree * m_parent;
     BinTree * m_rightChild;
     BinTree * m_leftChild;

@@ -1,10 +1,8 @@
 #include <iostream>
 #include "bintree.h"
-#include <deque>
-#include <stack>
 #include <vector>
+#include <fstream>
 #include <sstream>
-#include <queue>
 #include <list>
 using namespace std;
 
@@ -38,7 +36,6 @@ BinTree* createHuffTree(list<BinTree*>& trees)
 
         trees.erase(first);
         trees.erase(second);
-//        trees.insert(trees.begin(),root);
         trees.push_front(root);
 
         if(trees.size()==1)
@@ -51,21 +48,10 @@ BinTree* createHuffTree(list<BinTree*>& trees)
     }
     return root;
 }
-bool checkChar(unsigned char& symbol, BinTree * root)
-{
-    if(root)
-    {
-        if(symbol==root->getSymbol())
-        {
-            return true;
-        }
-
-    }
-    return false;
-}
 
 
-void createEncoding(vector<string>& symbolsEncoding, BinTree * root)
+
+void createEncoding(string *symbolsEncoding, BinTree * root)
 {
     stringstream way;
     string bufway;
@@ -77,15 +63,13 @@ void createEncoding(vector<string>& symbolsEncoding, BinTree * root)
     char c=0;
     while(1)
     {
-        if(bufway.length()==1 && bufway.back()=='1' && root->toParent() == NULL)
+        if(bufway.empty() && c=='1' && root->toParent() == NULL)
         {
-            cout<<"Дерево пройдено"<<endl;
+            cout<<"Tree completed"<<endl;
             break;
         }
         if((!root->toChild(0) && !root->toChild(1)) || c=='1')
         {
-            cout<<"leave "<<endl;
-            symbolsEncoding[root->getSymbol()]=bufway;
             c=bufway.back();
             bufway.pop_back();
             root=root->toParent();
@@ -100,6 +84,7 @@ void createEncoding(vector<string>& symbolsEncoding, BinTree * root)
         {
             root=root->toChild(1);
             bufway.push_back('1');
+            symbolsEncoding[root->getSymbol()] = bufway;
             continue;
         }
     }
@@ -127,12 +112,20 @@ int main(int argc, char *argv[])
     }
 
     root=createHuffTree(trees);
-    cout<<"qq"<<endl;
-
-    vector<string> strmass;
-    strmass.reserve(256);
+    string strmass[256];
 
     createEncoding(strmass,root);
+    ofstream toFile;
+    toFile.open("res.txt");
+    if(!toFile.is_open())
+    {
+        cout<<"Can't open file to write"<<endl;
+        return 0;
+    }
+    for(int i=0; i<256 ; ++i)
+    {
+        toFile<<"symbol "<<i<<" code is: "<<strmass[i]<<endl;
+    }
     cout<<"end"<<endl;
     return 1;
 }

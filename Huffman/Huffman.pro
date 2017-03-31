@@ -4,7 +4,11 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    bintree.cpp
+    bintree.cpp \
+    fileworker.cpp \
+    bitreader.cpp
 
 HEADERS += \
-    bintree.h
+    bintree.h \
+    fileworker.h \
+    bitreader.h

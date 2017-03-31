@@ -9,7 +9,6 @@ BinTree::BinTree(int weight, unsigned char symbol, BinTree *parent)
     m_rightChild=NULL;
     m_weight=weight;
     m_symbol=symbol;
-    id=symbol;
 }
 
 BinTree::~BinTree()
