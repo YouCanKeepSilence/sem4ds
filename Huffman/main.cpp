@@ -1,9 +1,12 @@
 #include <iostream>
 #include "bintree.h"
+#include "bitreader.h"
 #include <vector>
 #include <fstream>
+#include <cstdint>
 #include <sstream>
 #include <list>
+#include <netinet/in.h>
 using namespace std;
 
 BinTree* createHuffTree(list<BinTree*>& trees)
@@ -90,6 +93,64 @@ void createEncoding(string *symbolsEncoding, BinTree * root)
     }
 
 }
+void writeHeader(ofstream * toFile, int* symbols)
+{
+    if(toFile==NULL || symbols == NULL)
+    {
+        throw new std::exception;
+        return;
+    }
+    *toFile<<"HUFF";
+    uint32_t buf;
+    for(int i=0; i<256; ++i)
+    {
+        buf=symbols[i];
+        buf=htonl(buf);
+        (*toFile).write((char*)&buf,sizeof(uint32_t));
+    }
+}
+
+void binaryWrite(ofstream * toFile, ifstream * fromFile, string* encodingTable)
+{
+    if(toFile==NULL || fromFile==NULL || encodingTable==NULL)
+    {
+        throw new std::exception;
+        return;
+    }
+    int counter=0;
+    unsigned char c;
+    stringstream ss;
+    while(1)
+    {
+        c=fromFile->get();
+        if(fromFile->eof())
+        {
+            if(ss.str().length()!=0)
+            {
+                toFile->write(ss.str().c_str(),1);
+            }
+            break;
+        }
+        for(int i=0; i < encodingTable[c].length(); i++)
+        {
+
+            counter++;
+            cout<<counter<<endl;
+            if(encodingTable[(int)c][i]=='0')
+                ss<<0;
+            if(encodingTable[(int)c][i]=='1')
+                ss<<1;
+            if(counter==8)
+            {
+                toFile->write(ss.str().c_str(),1);
+                ss.str("");
+                ss.clear();
+                counter=0;
+            }
+        }
+    }
+
+}
 
 int main(int argc, char *argv[])
 {
@@ -111,21 +172,19 @@ int main(int argc, char *argv[])
         trees.push_back(tree);
     }
 
+
     root=createHuffTree(trees);
     string strmass[256];
 
     createEncoding(strmass,root);
-    ofstream toFile;
-    toFile.open("res.txt");
-    if(!toFile.is_open())
-    {
-        cout<<"Can't open file to write"<<endl;
-        return 0;
-    }
-    for(int i=0; i<256 ; ++i)
-    {
-        toFile<<"symbol "<<i<<" code is: "<<strmass[i]<<endl;
-    }
+
+    ifstream is;
+    is.open(filename);
+    ofstream os;
+    os.open("13.txt" , ios_base::binary);
+    writeHeader(&os,symbols);
+    binaryWrite(&os, &is, strmass);
+    is.close();
     cout<<"end"<<endl;
     return 1;
 }

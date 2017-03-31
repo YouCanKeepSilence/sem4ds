@@ -7,9 +7,9 @@ class BitReader
 public:
     BitReader();
     ~BitReader();
-    void attach(const std::ifstream * fromFile);
+    void attach(std::ifstream * fromFile);
     void detach();
-    const std::ifstream * getStream();
+    std::ifstream * getStream() const;
     int readNextBit();
 
 private:

@@ -102,4 +102,5 @@ BinTree::countSymbols(int *symbols, string filename)
         counter++;
         symbols[(int)c]++;
     }
+    fromFile.close();
 }
