@@ -190,23 +190,52 @@ BinTree::createEncoding(string *symbolsEncoding, BinTree *root)
             cout<<"Tree completed"<<endl;
             break;
         }
-        if((!root->toChild(0) && !root->toChild(1)) || c=='1')
+//        c=way.back();
+        if((!root->toChild(0) && !root->toChild(1)))
         {
-            c=way.back();
-            way.pop_back();
+
+            symbolsEncoding[root->getSymbol()] = way;
             root=root->toParent();
+            while(1)
+            {
+                c=way.back();
+                way.pop_back();
+                if(c=='0' || way.empty())
+                {
+                    break;
+                }
+                if(c=='1')
+                {
+                    if(root->toParent())
+                    {
+                        root=root->toParent();
+                    }
+                }
+
+            }
+            continue;
         }
+
         else if(root->toChild(0) && c!='0')
         {
-            root=root->toChild(0);
-            way.push_back('0');
+            while(1)
+            {
+                if(root->toChild(0))
+                {
+                    root=root->toChild(0);
+                    way.push_back('0');
+                }
+                else
+                    break;
+            }
             continue;
         }
         else if(root->toChild(1) && c!='1')
         {
             root=root->toChild(1);
             way.push_back('1');
-            symbolsEncoding[root->getSymbol()] = way;
+            c=0;
+//            symbolsEncoding[root->getSymbol()] = way;
             continue;
         }
     }

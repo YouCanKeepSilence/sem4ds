@@ -15,7 +15,13 @@ void archive(string inputFile,string outFile)
     string strmass[256];
     BinTree::createEncoding(strmass,root);
 
-
+    ofstream debug;
+    debug.open("ways.txt");
+    for(int i=0; i<256 ;i++)
+    {
+        debug<<i<<":"<<endl<<strmass[i]<<endl<<endl;
+    }
+    debug.close();
     ifstream input;
     ofstream out;
     input.open(inputFile);
@@ -86,12 +92,12 @@ int main(int argc, char *argv[])
     string out;
     input=argv[1];
     out=argv[2];
-    archive(input,out);
-//    ifstream is;
-//    ofstream os;
-//    is.open("huff.txt",ios_base::binary);
-//    os.open("unzip.txt");
-//    unarchive(&os,&is);
+//    archive(input,out);
+    ifstream is;
+    ofstream os;
+    is.open("huff.txt",ios_base::binary);
+    os.open("unzip.txt");
+    unarchive(&os,&is);
     cout<<"end"<<endl;
     return 1;
 }
