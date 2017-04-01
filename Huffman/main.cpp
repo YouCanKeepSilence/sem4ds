@@ -19,7 +19,7 @@ void archive(string inputFile,string outFile)
     debug.open("ways.txt");
     for(int i=0; i<256 ;i++)
     {
-        debug<<i<<":"<<endl<<strmass[i]<<endl<<endl;
+        debug<<i<<": "<<strmass[i]<<endl<<endl;
     }
     debug.close();
     ifstream input;
@@ -92,12 +92,12 @@ int main(int argc, char *argv[])
     string out;
     input=argv[1];
     out=argv[2];
-//    archive(input,out);
-    ifstream is;
-    ofstream os;
-    is.open("huff.txt",ios_base::binary);
-    os.open("unzip.txt");
-    unarchive(&os,&is);
+    archive(input,out);
+//    ifstream is;
+//    ofstream os;
+//    is.open("test.huf",ios_base::binary);
+//    os.open("unzip.txt");
+//    unarchive(&os,&is);
     cout<<"end"<<endl;
     return 1;
 }
