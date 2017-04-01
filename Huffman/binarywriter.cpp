@@ -23,6 +23,7 @@ BinaryWriter::flushToFile(ofstream *toFile, string s_byte)
             byte=byte | (mask>>i);
         }
     }
+    cout<<s_byte.length()<<endl;
     cout<<s_byte<<endl;
     cout<<"byte "<<(int)byte<<endl;
     toFile->write((char*)&byte,1);
@@ -34,7 +35,7 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
 {
     if(toFile==NULL || fromFile==NULL || encodingTable==NULL)
     {
-        throw new std::exception;
+        throw "No pointer to streams or encoding table";
         return;
     }
     int counter=0;
@@ -48,7 +49,7 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
             if(ss.str().length()!=0)//Если исходный файл кончился , флашим и уходим.
             {
                 string currentByte=ss.str();
-                flushToFile(toFile,currentByte);
+                BinaryWriter::flushToFile(toFile,currentByte);
 
             }
             break;
@@ -64,7 +65,9 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
             if(counter==8)
             {
                 string currentByte=ss.str();
-                flushToFile(toFile,currentByte);
+                cout<<"path "<<encodingTable[c]<< " : ";
+
+                BinaryWriter::flushToFile(toFile,currentByte);
                 ss.str("");
                 ss.clear();
                 counter=0;
@@ -78,7 +81,7 @@ BinaryWriter::writeHeader(ofstream *toFile, uint32_t *symbols)
 {
     if(toFile==NULL || symbols == NULL)
     {
-        throw new std::exception;
+        throw "no input stream of symbols array";
         return;
     }
     *toFile<<"HUFF";

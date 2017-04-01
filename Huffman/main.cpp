@@ -5,42 +5,80 @@
 #include <fstream>
 
 using namespace std;
-
-int main(int argc, char *argv[])
+void archive(string inputFile,string outFile)
 {
-    system("clear");
-    if(argc!=2)
-    {
-        cout<<"Не введено имя входного файла"<<endl;
-        return 0;
-    }
-
-    string filename=argv[1];
     uint32_t symbols[256];
-    BinTree::countSymbols(symbols,filename);
+    BinTree::countSymbols(symbols,inputFile);
 
     BinTree *root=BinTree::createHuffTree(symbols);
 
     string strmass[256];
     BinTree::createEncoding(strmass,root);
+    ifstream input;
+    ofstream out;
+    input.open(inputFile);
+    out.open(outFile , ios_base::binary);
+    BinaryWriter::writeHeader(&out,symbols);
+    BinaryWriter::binaryWrite(&out, &input, strmass);
+    input.close();
+    out.close();
+}
 
-    ifstream is;
-    is.open(filename);
-    ofstream os;
-    os.open("13.txt" , ios_base::binary);
-    BinaryWriter::writeHeader(&os,symbols);
-    BinaryWriter::binaryWrite(&os, &is, strmass);
-    is.close();
-    os.close();
-    is.open("13.txt",ios_base::binary);
-    uint32_t symbol1[256];
+void unarchive(ofstream * toFile , ifstream * fromFile)
+{
+    uint32_t symbols[256];
     BitReader rr;
-    rr.attach(&is);
-    rr.readHeader(symbol1);
-    for(int i=0; i<8 ; i++)
+    rr.attach(fromFile);
+    rr.readHeader(symbols);
+    BinTree * root=BinTree::createHuffTree(symbols);
+    BinTree * realRoot = root;
+    unsigned int step;
+    unsigned char symbol;
+    while(1)
     {
-        cout<<rr.readNextBit();
+        try
+        {
+            if(!root->toChild(0) && !root->toChild(1))
+            {
+                symbol = root->getSymbol();
+                toFile->put(symbol);
+                root=realRoot;
+            }
+            step = rr.readNextBit();
+            if(root->toChild(step))
+            {
+                root=root->toChild(step);
+            }
+
+        }
+        catch(const char * ex)
+        {
+            cout<<ex<<endl;
+            break;
+        }
     }
-//    cout<<"end"<<endl;
+
+
+}
+
+int main(int argc, char *argv[])
+{
+    system("clear");
+    if(argc!=3)
+    {
+        cout<<"Not enough files"<<endl;
+        return 0;
+    }
+    string input;
+    string out;
+    input=argv[1];
+    out=argv[2];
+    archive(input,out);
+//    ifstream is;
+//    ofstream os;
+//    os.open("unzip.txt");
+//    is.open("kill.huf",ios_base::binary);
+//    unarchive(&os,&is);
+    cout<<"end"<<endl;
     return 1;
 }
