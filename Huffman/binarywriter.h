@@ -10,7 +10,7 @@ public:
     static void binaryWrite(std::ofstream * toFile, std::ifstream * fromFile, std::string* encodingTable);
     static void writeHeader(std::ofstream * toFile, uint32_t *symbols);
 private:
-    static void flushToFile(std::ofstream * toFile, std::string s_byte);
+    static void flushToFile(std::ofstream * toFile, unsigned char s_byte);
 };
 
 #endif // BINARYWRITER_H

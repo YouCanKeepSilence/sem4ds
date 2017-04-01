@@ -76,8 +76,8 @@ int main(int argc, char *argv[])
     archive(input,out);
 //    ifstream is;
 //    ofstream os;
-//    os.open("unzip.txt");
 //    is.open("kill.huf",ios_base::binary);
+//    os.open("unzip.txt");
 //    unarchive(&os,&is);
     cout<<"end"<<endl;
     return 1;

@@ -8,25 +8,25 @@ BinaryWriter::BinaryWriter()
 
 }
 void
-BinaryWriter::flushToFile(ofstream *toFile, string s_byte)
+BinaryWriter::flushToFile(ofstream *toFile, unsigned char s_byte)
 {
-    unsigned char byte=0b00000000;
-    unsigned char mask=0b10000000;
-    for(unsigned int i=0; i<s_byte.length(); i++)
-    {
-        if(s_byte[i]=='0')
-        {
-            continue;
-        }
-        if(s_byte[i]=='1')
-        {
-            byte=byte | (mask>>i);
-        }
-    }
-    cout<<s_byte.length()<<endl;
+//    unsigned char byte=0b00000000;
+//    unsigned char mask=0b10000000;
+//    for(unsigned int i=0; i<s_byte.length(); i++)
+//    {
+//        if(s_byte[i]=='0')
+//        {
+//            continue;
+//        }
+//        if(s_byte[i]=='1')
+//        {
+//            byte=byte | (mask>>i);
+//        }
+//    }
+//    cout<<s_byte.length()<<endl;
     cout<<s_byte<<endl;
-    cout<<"byte "<<(int)byte<<endl;
-    toFile->write((char*)&byte,1);
+    cout<<"byte "<<(int)s_byte<<endl;
+    toFile->write((char*)&s_byte,1);
 
 }
 
@@ -40,36 +40,43 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
     }
     int counter=0;
     unsigned char c;
+    unsigned char byteBuf=0b00000000;
     stringstream ss;
     while(1)
     {
+
+        unsigned char bufMask=0b10000000;
         c=fromFile->get();
         if(fromFile->eof())
         {
-            if(ss.str().length()!=0)//Если исходный файл кончился , флашим и уходим.
+            if(byteBuf!=0)//Если исходный файл кончился , флашим и уходим.
             {
-                string currentByte=ss.str();
-                BinaryWriter::flushToFile(toFile,currentByte);
+                BinaryWriter::flushToFile(toFile,byteBuf);
 
             }
             break;
         }
-        for(unsigned int i=0; i < encodingTable[c].length(); i++)
+        for(unsigned int i=counter; i < encodingTable[c].length(); i++)
         {
 
             counter++;
             if(encodingTable[(int)c][i]=='0')
-                ss<<0;
-            if(encodingTable[(int)c][i]=='1')
-                ss<<1;
-            if(counter==8)
             {
-                string currentByte=ss.str();
-                cout<<"path "<<encodingTable[c]<< " : ";
+//                continue;
+            }
+            if(encodingTable[(int)c][i]=='1')
+            {
+                byteBuf = byteBuf | (bufMask >> i % 8);
+            }
+            if(counter>7)
+            {
+//                string currentByte=ss.str();
+//                cout<<"path "<<encodingTable[c]<< " : ";
 
-                BinaryWriter::flushToFile(toFile,currentByte);
-                ss.str("");
-                ss.clear();
+                BinaryWriter::flushToFile(toFile,byteBuf);
+                byteBuf=0b00000000;
+//                ss.str("");
+//                ss.clear();
                 counter=0;
             }
         }
