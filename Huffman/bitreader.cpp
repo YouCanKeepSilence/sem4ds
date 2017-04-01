@@ -1,10 +1,43 @@
 #include "bitreader.h"
-
+#include <iostream>
+#include <QtEndian>
 BitReader::BitReader()
 {
     m_fromFile=NULL;
     m_currentBit=7;
     m_currentByte=0;
+}
+BitReader::~BitReader()
+{
+
+}
+
+bool
+BitReader::readHeader(uint32_t *symbols)
+{
+    if(m_fromFile==NULL)
+    {
+        throw new std::exception;
+        return false;
+    }
+    char c[4];
+    uint32_t buf;
+    m_fromFile->read(c,4);
+    std::string str(c);
+    if(!str.compare("HUFF"))
+    {
+        std::cout<<"MyFile"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"Not a HUFF file"<<std::endl;
+        throw new std::exception;
+    }
+    for(int i=0; i<256 ; i++)
+    {
+        m_fromFile->read((char*)&buf,4);
+        symbols[i]=qFromBigEndian(buf);;
+    }
 }
 
 void

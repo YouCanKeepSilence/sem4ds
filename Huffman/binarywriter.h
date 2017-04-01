@@ -8,7 +8,9 @@ class BinaryWriter
 public:
     BinaryWriter();
     static void binaryWrite(std::ofstream * toFile, std::ifstream * fromFile, std::string* encodingTable);
-    static void writeHeader(std::ofstream * toFile, int* symbols);
+    static void writeHeader(std::ofstream * toFile, uint32_t *symbols);
+private:
+    void flushToFile(std::ofstream * toFile, std::string s_byte);
 };
 
 #endif // BINARYWRITER_H

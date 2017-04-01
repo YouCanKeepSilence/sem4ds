@@ -8,6 +8,28 @@ BinaryWriter::BinaryWriter()
 
 }
 void
+BinaryWriter::flushToFile(ofstream *toFile, string s_byte)
+{
+    unsigned char byte=0b00000000;
+    unsigned char mask=0b10000000;
+    for(unsigned int i=0; i<s_byte.length(); i++)
+    {
+        if(s_byte[i]=='0')
+        {
+            continue;
+        }
+        if(s_byte[i]=='1')
+        {
+            byte=byte | (mask>>i);
+        }
+    }
+    cout<<s_byte<<endl;
+    cout<<"byte "<<(int)byte<<endl;
+    toFile->write((char*)&byte,1);
+
+}
+
+void
 BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::__cxx11::string *encodingTable)
 {
     if(toFile==NULL || fromFile==NULL || encodingTable==NULL)
@@ -25,7 +47,9 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
         {
             if(ss.str().length()!=0)//Если исходный файл кончился , флашим и уходим.
             {
-                toFile->write(ss.str().c_str(),1);
+                string currentByte=ss.str();
+                flushToFile(toFile,currentByte);
+
             }
             break;
         }
@@ -33,14 +57,14 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
         {
 
             counter++;
-            cout<<counter<<endl;
             if(encodingTable[(int)c][i]=='0')
                 ss<<0;
             if(encodingTable[(int)c][i]=='1')
                 ss<<1;
             if(counter==8)
             {
-                toFile->write(ss.str().c_str(),1);
+                string currentByte=ss.str();
+                flushToFile(toFile,currentByte);
                 ss.str("");
                 ss.clear();
                 counter=0;
@@ -50,7 +74,7 @@ BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::_
 }
 
 void
-BinaryWriter::writeHeader(ofstream *toFile, int *symbols)
+BinaryWriter::writeHeader(ofstream *toFile, uint32_t *symbols)
 {
     if(toFile==NULL || symbols == NULL)
     {
@@ -63,6 +87,6 @@ BinaryWriter::writeHeader(ofstream *toFile, int *symbols)
     {
         buf=symbols[i];
         buf=qToBigEndian(buf);
-        (*toFile).write((char*)&buf,sizeof(uint32_t));
+        (*toFile).write((char*)&buf,4);
     }
 }

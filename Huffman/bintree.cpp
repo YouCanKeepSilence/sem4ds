@@ -2,7 +2,7 @@
 #include <fstream>
 #include <iostream>
 using namespace std;
-BinTree::BinTree(int weight, unsigned char symbol, BinTree *parent)
+BinTree::BinTree(uint32_t weight, unsigned char symbol, BinTree *parent)
 {
     m_parent=parent;
     m_leftChild=NULL;
@@ -34,7 +34,7 @@ BinTree::setParent(BinTree *parent)
 }
 
 void
-BinTree::addChild(int weight, unsigned char symbol, bool direction)
+BinTree::addChild(uint32_t weight, unsigned char symbol, bool direction)
 {
     direction ? m_rightChild=new BinTree(weight,symbol, this) : m_leftChild=new BinTree(weight,symbol,this);
 }
@@ -44,7 +44,7 @@ unsigned char BinTree::getSymbol()
     return m_symbol;
 }
 
-int
+uint32_t
 BinTree::getWeight()
 {
     return m_weight;
@@ -70,13 +70,13 @@ BinTree::addChild(BinTree *child,BinTree * parent, bool direction)
 }
 
 void
-BinTree::setWeight(int weight)
+BinTree::setWeight(uint32_t weight)
 {
     m_weight=weight;
 }
 
 void
-BinTree::countSymbols(int *symbols, string filename)
+BinTree::countSymbols(uint32_t *symbols, string filename)
 {
     int counter=0;
     ifstream fromFile;
@@ -106,7 +106,7 @@ BinTree::countSymbols(int *symbols, string filename)
 }
 
 std::list<BinTree*>
-BinTree::createForest(int *symbols)
+BinTree::createForest(uint32_t *symbols)
 {
     list<BinTree*> trees;
     for(int i=0; i<256; i++)
@@ -118,7 +118,7 @@ BinTree::createForest(int *symbols)
 }
 
 BinTree*
-BinTree::createHuffTree(int * symbols)
+BinTree::createHuffTree(uint32_t * symbols)
 {
     BinTree * root;
     list<BinTree*> forest=BinTree::createForest(symbols);

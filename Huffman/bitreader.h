@@ -11,7 +11,7 @@ public:
     void detach();
     std::ifstream * getStream() const;
     int readNextBit();
-
+    bool readHeader(uint32_t * symbols);
 private:
 
     std::ifstream * m_fromFile;
