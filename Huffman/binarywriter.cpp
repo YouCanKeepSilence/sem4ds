@@ -5,98 +5,95 @@
 using namespace std;
 BinaryWriter::BinaryWriter()
 {
-
+    m_currentBit=0;
+    m_currentByte=0;
+    m_toFile=NULL;
 }
 void
-BinaryWriter::flushToFile(ofstream *toFile, unsigned char s_byte)
+BinaryWriter::attach(ofstream *toFile)
 {
-//    unsigned char byte=0b00000000;
-//    unsigned char mask=0b10000000;
-//    for(unsigned int i=0; i<s_byte.length(); i++)
-//    {
-//        if(s_byte[i]=='0')
-//        {
-//            continue;
-//        }
-//        if(s_byte[i]=='1')
-//        {
-//            byte=byte | (mask>>i);
-//        }
-//    }
-//    cout<<s_byte.length()<<endl;
-    cout<<s_byte<<endl;
-    cout<<"byte "<<(int)s_byte<<endl;
-    toFile->write((char*)&s_byte,1);
-
+    m_toFile=toFile;
+    m_currentBit=0;
+    m_currentByte=0;
+}
+void
+BinaryWriter::writeNextBit(bool bit)
+{
+    if(bit)
+    {
+        m_currentByte = m_currentByte | (0b10000000 >> m_currentBit);
+    }
+    m_currentBit++;
+    if(m_currentBit > 7)
+    {
+        m_currentBit=0;
+        m_toFile->write(&m_currentByte,1);
+        m_currentByte=0;
+    }
 }
 
 void
-BinaryWriter::binaryWrite(std::ofstream *toFile, std::ifstream *fromFile, std::__cxx11::string *encodingTable)
+BinaryWriter::detach()
 {
-    if(toFile==NULL || fromFile==NULL || encodingTable==NULL)
+    m_toFile=NULL;
+    m_currentBit=0;
+    m_currentByte=0;
+}
+
+void
+BinaryWriter::flushToFile()
+{
+    if(m_currentBit!=0)
+    {
+        if(m_toFile)
+        {
+            m_toFile->write(&m_currentByte,1);
+        }
+        m_currentBit=0;
+        m_currentByte=0;
+    }
+}
+
+void
+BinaryWriter::binaryWrite(std::ifstream *fromFile, std::string *encodingTable)
+{
+    if(m_toFile==NULL || fromFile==NULL || encodingTable==NULL)
     {
         throw "No pointer to streams or encoding table";
         return;
     }
-    int counter=0;
     unsigned char c;
-    unsigned char byteBuf=0b00000000;
-    stringstream ss;
     while(1)
     {
-
-        unsigned char bufMask=0b10000000;
         c=fromFile->get();
         if(fromFile->eof())
         {
-            if(byteBuf!=0)//Если исходный файл кончился , флашим и уходим.
-            {
-                BinaryWriter::flushToFile(toFile,byteBuf);
-
-            }
+            //Если исходный файл кончился , флашим и уходим.
+            flushToFile();
             break;
         }
-        for(unsigned int i=counter; i < encodingTable[c].length(); i++)
+        for(unsigned int i=0; i < encodingTable[c].length(); i++)
         {
 
-            counter++;
-            if(encodingTable[(int)c][i]=='0')
-            {
-//                continue;
-            }
-            if(encodingTable[(int)c][i]=='1')
-            {
-                byteBuf = byteBuf | (bufMask >> i % 8);
-            }
-            if(counter>7)
-            {
-//                string currentByte=ss.str();
-//                cout<<"path "<<encodingTable[c]<< " : ";
-
-                BinaryWriter::flushToFile(toFile,byteBuf);
-                byteBuf=0b00000000;
-//                ss.str("");
-//                ss.clear();
-                counter=0;
-            }
+            writeNextBit(encodingTable[(int)c][i]=='1');
         }
     }
 }
 
 void
-BinaryWriter::writeHeader(ofstream *toFile, uint32_t *symbols)
+BinaryWriter::writeHeader(uint32_t *symbols)
 {
-    if(toFile==NULL || symbols == NULL)
+    if(m_toFile==NULL || symbols == NULL)
     {
         throw "no input stream of symbols array";
         return;
     }
-    *toFile<<"HUFF";
+    m_toFile->write("HUFF",4);
     uint32_t buf;
     for(int i=0; i<256; ++i)
     {
         buf=symbols[i];
         buf=qToBigEndian(buf);
-        (*toFile).write((char*)&buf,4);
+        m_toFile->write((char*)&buf,4);
     }
 }

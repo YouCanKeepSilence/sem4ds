@@ -1,6 +1,7 @@
 #include "bitreader.h"
 #include <iostream>
 #include <QtEndian>
+#include <cstring>
 BitReader::BitReader()
 {
     m_fromFile=NULL;
@@ -17,20 +18,26 @@ BitReader::readHeader(uint32_t *symbols)
 {
     if(m_fromFile==NULL)
     {
-        throw new std::exception;
+        throw "No input stream";
         return false;
+    }
+    if(symbols==NULL)
+    {
+        throw "No array of numbers";
     }
     char c[4];
     uint32_t buf;
     m_fromFile->read(c,4);
-    std::string str(c);
-    if(!str.compare("HUFF"))
+//    std::string str(c);
+
+//    std::cout<<c<<std::endl;
+    if(!strcmp("HUFF",c))
     {
-        std::cout<<"MyFile"<<std::endl;
+        throw "Not a HUFF file";
     }
     else
     {
-        throw "Not a HUFF file";
+        std::cout<<"MyFile"<<std::endl;
     }
     for(int i=0; i<256 ; i++)
     {
@@ -65,7 +72,7 @@ BitReader::readNextBit()
 {
     if(m_fromFile==NULL)
     {
-        throw "End of input file reached";
+        throw "No input files";
         return -1;
     }
     m_currentBit++;

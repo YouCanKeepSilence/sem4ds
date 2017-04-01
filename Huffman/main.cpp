@@ -14,12 +14,16 @@ void archive(string inputFile,string outFile)
 
     string strmass[256];
     BinTree::createEncoding(strmass,root);
+
+
     ifstream input;
     ofstream out;
     input.open(inputFile);
     out.open(outFile , ios_base::binary);
-    BinaryWriter::writeHeader(&out,symbols);
-    BinaryWriter::binaryWrite(&out, &input, strmass);
+    BinaryWriter writer;
+    writer.attach(&out);
+    writer.writeHeader(symbols);
+    writer.binaryWrite( &input, strmass);
     input.close();
     out.close();
 }
@@ -29,11 +33,19 @@ void unarchive(ofstream * toFile , ifstream * fromFile)
     uint32_t symbols[256];
     BitReader rr;
     rr.attach(fromFile);
-    rr.readHeader(symbols);
+    try
+    {
+        rr.readHeader(symbols);
+    }
+    catch(const char * ex)
+    {
+        cout<<ex<<endl;
+    }
+
     BinTree * root=BinTree::createHuffTree(symbols);
     BinTree * realRoot = root;
     unsigned int step;
-    unsigned char symbol;
+    char symbol;
     while(1)
     {
         try
@@ -41,8 +53,9 @@ void unarchive(ofstream * toFile , ifstream * fromFile)
             if(!root->toChild(0) && !root->toChild(1))
             {
                 symbol = root->getSymbol();
-                toFile->put(symbol);
+                *toFile<<symbol;
                 root=realRoot;
+                continue;
             }
             step = rr.readNextBit();
             if(root->toChild(step))
@@ -76,7 +89,7 @@ int main(int argc, char *argv[])
     archive(input,out);
 //    ifstream is;
 //    ofstream os;
-//    is.open("kill.huf",ios_base::binary);
+//    is.open("huff.txt",ios_base::binary);
 //    os.open("unzip.txt");
 //    unarchive(&os,&is);
     cout<<"end"<<endl;

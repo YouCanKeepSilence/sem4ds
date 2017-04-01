@@ -2,15 +2,22 @@
 #define BINARYWRITER_H
 #include <iostream>
 #include <string>
-
+using namespace std;
 class BinaryWriter
 {
 public:
     BinaryWriter();
-    static void binaryWrite(std::ofstream * toFile, std::ifstream * fromFile, std::string* encodingTable);
-    static void writeHeader(std::ofstream * toFile, uint32_t *symbols);
+    void attach(ofstream * toFile);
+    void detach();
+    void writeNextBit(bool bit);
+    void binaryWrite(std::ifstream * fromFile, std::string* encodingTable);
+    void writeHeader(uint32_t *symbols);
 private:
-    static void flushToFile(std::ofstream * toFile, unsigned char s_byte);
+    void flushToFile();
+    ofstream * m_toFile;
+    char m_currentByte;
+    int m_currentBit;
+
 };
 
 #endif // BINARYWRITER_H

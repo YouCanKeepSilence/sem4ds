@@ -66,7 +66,6 @@ BinTree::addChild(BinTree *child,BinTree * parent, bool direction)
 {
     child->setParent(parent);
     direction ? parent->m_rightChild=child : parent->m_leftChild=child;
-//    parent->recalcWeight();
 }
 
 void
@@ -122,13 +121,20 @@ BinTree::createHuffTree(uint32_t * symbols)
 {
     BinTree * root;
     list<BinTree*> forest=BinTree::createForest(symbols);
-
+    ofstream debug;
+    debug.open("tree-debug.txt");
     list<BinTree*>::iterator i;
     while(1)
     {
         list<BinTree*>::iterator first = forest.begin();
         list<BinTree*>::iterator second = forest.begin();
-
+        for( i=forest.begin(); i != forest.end(); ++i)
+        {
+            if(((*first)->getWeight() > (*i)->getWeight()))
+            {
+                first = i;
+            }
+        }
         if(first==second)
         {
             second++;
@@ -141,11 +147,13 @@ BinTree::createHuffTree(uint32_t * symbols)
             }
         }
         root = new BinTree();
+
         root->addChild(*first,root,0);
         root->addChild(*second,root,1);
-
+        debug<<"Объединяем: "<<(int)(*first)->getSymbol()<<" и "<<(int)(*second)->getSymbol()<<endl<<"Их весы: "<<(*first)->getWeight()
+            <<" и "<<(*second)->getWeight()<<endl;
         int weight=(*first)->getWeight() + (*second)->getWeight();
-
+//        debug<<" Итоговый вес : "<<weight<<endl;
         root->setWeight(weight);
 
         forest.erase(first);
@@ -157,6 +165,7 @@ BinTree::createHuffTree(uint32_t * symbols)
             root=forest.front();
             forest.clear();
             cout<<root->getWeight()<<endl;
+            debug.close();
             break;
         }
 
