@@ -1,6 +1,7 @@
 #ifndef BINTREE_H
 #define BINTREE_H
 #include <string>
+#include <list>
 
 class BinTree
 {
@@ -22,7 +23,10 @@ public:
     BinTree * toParent();// Вернет NULL если это самый корень дерева
 
     static void countSymbols(int * symbols, std::string filename);
+    static BinTree* createHuffTree(int * symbols);
+    static void createEncoding(std::string *symbolsEncoding, BinTree * root);
 private:
+    static std::list<BinTree*> createForest(int * symbols);
     BinTree * m_parent;
     BinTree * m_rightChild;
     BinTree * m_leftChild;

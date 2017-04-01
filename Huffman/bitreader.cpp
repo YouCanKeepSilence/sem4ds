@@ -23,7 +23,7 @@ BitReader::attach(std::ifstream *fromFile)
     m_currentByte=0;
 }
 
-std::__1::ifstream *BitReader::getStream() const
+std::ifstream *BitReader::getStream() const
 {
     return m_fromFile;
 }

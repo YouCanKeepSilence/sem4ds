@@ -104,3 +104,101 @@ BinTree::countSymbols(int *symbols, string filename)
     }
     fromFile.close();
 }
+
+std::list<BinTree*>
+BinTree::createForest(int *symbols)
+{
+    list<BinTree*> trees;
+    for(int i=0; i<256; i++)
+    {
+        BinTree * tree = new BinTree(symbols[i], i);
+        trees.push_back(tree);
+    }
+    return trees;
+}
+
+BinTree*
+BinTree::createHuffTree(int * symbols)
+{
+    BinTree * root;
+    list<BinTree*> forest=BinTree::createForest(symbols);
+
+    list<BinTree*>::iterator i;
+    while(1)
+    {
+        list<BinTree*>::iterator first = forest.begin();
+        list<BinTree*>::iterator second = forest.begin();
+
+        if(first==second)
+        {
+            second++;
+        }
+        for( i=forest.begin(); i != forest.end(); ++i)
+        {
+            if(((*second)->getWeight() > (*i)->getWeight()) && (i != first) )
+            {
+                second = i;
+            }
+        }
+        root = new BinTree();
+        root->addChild(*first,root,0);
+        root->addChild(*second,root,1);
+
+        int weight=(*first)->getWeight() + (*second)->getWeight();
+
+        root->setWeight(weight);
+
+        forest.erase(first);
+        forest.erase(second);
+        forest.push_front(root);
+
+        if(forest.size()==1)
+        {
+            root=forest.front();
+            forest.clear();
+            cout<<root->getWeight()<<endl;
+            break;
+        }
+
+    }
+    return root;
+}
+
+void
+BinTree::createEncoding(string *symbolsEncoding, BinTree *root)
+{
+    string way;
+    if(!root->toChild(0) && !root->toChild(1))
+    {
+        cout<<"Дерево не имеет детей"<<endl;
+        exit(1);
+    }
+    char c=0;
+    while(1)
+    {
+        if(way.empty() && c=='1' && root->toParent() == NULL)
+        {
+            cout<<"Tree completed"<<endl;
+            break;
+        }
+        if((!root->toChild(0) && !root->toChild(1)) || c=='1')
+        {
+            c=way.back();
+            way.pop_back();
+            root=root->toParent();
+        }
+        else if(root->toChild(0) && c!='0')
+        {
+            root=root->toChild(0);
+            way.push_back('0');
+            continue;
+        }
+        else if(root->toChild(1) && c!='1')
+        {
+            root=root->toChild(1);
+            way.push_back('1');
+            symbolsEncoding[root->getSymbol()] = way;
+            continue;
+        }
+    }
+}
