@@ -1,12 +1,12 @@
-#ifndef BINARYWRITER_H
-#define BINARYWRITER_H
+#ifndef BITWRITER_H
+#define BITWRITER_H
 #include <iostream>
 #include <string>
 using namespace std;
-class BinaryWriter
+class BitWriter
 {
 public:
-    BinaryWriter();
+    BitWriter();
     void attach(ofstream * toFile);
     void detach();
     void writeNextBit(bool bit);
@@ -20,4 +20,4 @@ private:
 
 };
 
-#endif // BINARYWRITER_H
+#endif // BITWRITER_H

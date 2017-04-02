@@ -1,23 +1,23 @@
-#include "binarywriter.h"
+#include "bitwriter.h"
 #include <sstream>
 #include <fstream>
 #include <QtEndian>
 using namespace std;
-BinaryWriter::BinaryWriter()
+BitWriter::BitWriter()
 {
     m_currentBit=0;
     m_currentByte=0;
     m_toFile=NULL;
 }
 void
-BinaryWriter::attach(ofstream *toFile)
+BitWriter::attach(ofstream *toFile)
 {
     m_toFile=toFile;
     m_currentBit=0;
     m_currentByte=0;
 }
 void
-BinaryWriter::writeNextBit(bool bit)
+BitWriter::writeNextBit(bool bit)
 {
     if(bit)
     {
@@ -33,7 +33,7 @@ BinaryWriter::writeNextBit(bool bit)
 }
 
 void
-BinaryWriter::detach()
+BitWriter::detach()
 {
     m_toFile=NULL;
     m_currentBit=0;
@@ -41,7 +41,7 @@ BinaryWriter::detach()
 }
 
 void
-BinaryWriter::flushToFile()
+BitWriter::flushToFile()
 {
     if(m_currentBit!=0)
     {
@@ -55,7 +55,7 @@ BinaryWriter::flushToFile()
 }
 
 void
-BinaryWriter::binaryWrite(std::ifstream *fromFile, std::string *encodingTable)
+BitWriter::binaryWrite(std::ifstream *fromFile, std::string *encodingTable)
 {
     if(m_toFile==NULL || fromFile==NULL || encodingTable==NULL)
     {
@@ -81,12 +81,15 @@ BinaryWriter::binaryWrite(std::ifstream *fromFile, std::string *encodingTable)
 }
 
 void
-BinaryWriter::writeHeader(uint32_t *symbols)
+BitWriter::writeHeader(uint32_t *symbols)
 {
     if(m_toFile==NULL || symbols == NULL)
     {
-        throw "no input stream of symbols array";
-        return;
+        throw "No input file";
+    }
+    if(symbols==NULL)
+    {
+        throw "No symbols array";
     }
     m_toFile->write("HUFF",4);
     uint32_t buf;

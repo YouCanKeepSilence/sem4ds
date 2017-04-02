@@ -101,12 +101,12 @@ BinTree::countSymbols(uint32_t *symbols, string filename)
         counter++;
         symbols[(int)c]++;
     }
-    ofstream debug;
-    debug.open("forest.txt");
-    for(int i=0; i<256; i++)
-    {
-        debug<<i<<" "<<symbols[i]<<endl;
-    }
+//    ofstream debug;
+//    debug.open("forest.txt");
+//    for(int i=0; i<256; i++)
+//    {
+//        debug<<i<<" "<<symbols[i]<<endl;
+//    }
     fromFile.close();
 }
 
@@ -127,8 +127,8 @@ BinTree::createHuffTree(uint32_t * symbols)
 {
     BinTree * root;
     list<BinTree*> forest=BinTree::createForest(symbols);
-    ofstream debug;
-    debug.open("tree-debug.txt");
+//    ofstream debug;
+//    debug.open("tree-debug.txt");
     list<BinTree*>::iterator i;
     while(1)
     {
@@ -156,8 +156,8 @@ BinTree::createHuffTree(uint32_t * symbols)
 
         root->addChild(*first,root,0);
         root->addChild(*second,root,1);
-        debug<<"Объединяем: "<<(int)(*first)->getSymbol()<<" и "<<(int)(*second)->getSymbol()<<endl<<"Их весы: "<<(*first)->getWeight()
-            <<" и "<<(*second)->getWeight()<<endl;
+//        debug<<"Объединяем: "<<(int)(*first)->getSymbol()<<" и "<<(int)(*second)->getSymbol()<<endl<<"Их весы: "<<(*first)->getWeight()
+//            <<" и "<<(*second)->getWeight()<<endl;
         int weight=(*first)->getWeight() + (*second)->getWeight();
 //        debug<<" Итоговый вес : "<<weight<<endl;
         root->setWeight(weight);
@@ -171,7 +171,7 @@ BinTree::createHuffTree(uint32_t * symbols)
             root=forest.front();
             forest.clear();
             cout<<root->getWeight()<<endl;
-            debug.close();
+//            debug.close();
             break;
         }
 

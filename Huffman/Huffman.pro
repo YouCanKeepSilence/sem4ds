@@ -6,9 +6,11 @@ CONFIG += qt
 SOURCES += main.cpp \
     bintree.cpp \
     bitreader.cpp \
-    binarywriter.cpp
+    bitwriter.cpp \
+    archiver.cpp
 
 HEADERS += \
     bintree.h \
     bitreader.h \
-    binarywriter.h
+    bitwriter.h \
+    archiver.h
