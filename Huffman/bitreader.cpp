@@ -31,7 +31,8 @@ BitReader::readHeader(uint32_t *symbols)
 //    std::string str(c);
 
 //    std::cout<<c<<std::endl;
-    if(!strcmp("HUFF",c))
+//    if(!strcmp("HUFF",c))
+    if(!(c[0]=='H' && c[1]=='U' && c[2]=='F' && c[3]=='F'))
     {
         throw "Not a HUFF file";
     }
@@ -78,14 +79,12 @@ BitReader::readNextBit()
     m_currentBit++;
     if(m_currentBit > 7)
         {
-            (*m_fromFile) >> m_currentByte;
+            m_fromFile->read((char*)&m_currentByte,1);
             if(m_fromFile->eof())
             {
                 throw "End of file reached";
             }
             m_currentBit = 0;
         }
-        int buf=(m_currentByte & (0x80 /* 0b1000000 */ >> m_currentBit)) ? 1 : 0;
-
-        return buf;//сдвигаем на 7 бит вправо и пересекаем с текущим байтом.
+        return (m_currentByte & (0x80 /* 0b1000000 */ >> m_currentBit)) ? 1 : 0;//сдвигаем на 7 бит вправо и пересекаем с текущим байтом.
 }

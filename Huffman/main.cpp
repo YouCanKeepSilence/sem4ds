@@ -51,7 +51,7 @@ void unarchive(ofstream * toFile , ifstream * fromFile)
     debug.open("forest.txt");
     for(int i=0; i<256; i++)
     {
-        debug<<i<<" : "<<symbols[i]<<endl;
+        debug<<i<<" "<<symbols[i]<<endl;
     }
     debug.close();
     BinTree * root=BinTree::createHuffTree(symbols);
@@ -68,31 +68,43 @@ void unarchive(ofstream * toFile , ifstream * fromFile)
     }
     debug.close();
     //-debug
-
-    unsigned int step;
-    char symbol;
+    debug.open("readWays.txt");
+    string way;
+    int step;
+    unsigned char symbol;
     while(1)
     {
+        if(!root->toChild(0) && !root->toChild(1))
+        {
+
+            symbol = root->getSymbol();
+            debug<<way<<" "<<(int)symbol<<endl;
+            way.clear();
+            *toFile<<symbol;
+            root=realRoot;
+            continue;
+        }
         try
         {
-            if(!root->toChild(0) && !root->toChild(1))
-            {
-                symbol = root->getSymbol();
-                *toFile<<symbol;
-                root=realRoot;
-                continue;
-            }
             step = rr.readNextBit();
-            if(root->toChild(step))
-            {
-                root=root->toChild(step);
-            }
 
         }
         catch(const char * ex)
         {
             cout<<ex<<endl;
             break;
+        }
+        if(root->toChild(step))
+        {
+            if(step==1)
+            {
+                way.push_back('1');
+            }
+            else if(step==0)
+            {
+                way.push_back('0');
+            }
+            root=root->toChild(step);
         }
     }
 
@@ -114,8 +126,8 @@ int main(int argc, char *argv[])
 //    archive(input,out);
     ifstream is;
     ofstream os;
-    is.open("huff.txt",ios_base::binary);
-    os.open("unzip.txt");
+    is.open("test1l.huf",ios_base::binary);
+    os.open("unzip1.txt");
     unarchive(&os,&is);
     cout<<"end"<<endl;
     return 1;

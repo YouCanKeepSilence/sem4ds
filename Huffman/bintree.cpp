@@ -91,8 +91,8 @@ BinTree::countSymbols(uint32_t *symbols, string filename)
     }
     while(1)
     {
-        int c;
-        c=fromFile.get();
+        unsigned char c;
+        fromFile.read((char*)&c,1);
         if(fromFile.eof())
         {
             cout<<counter<<endl;
@@ -105,7 +105,7 @@ BinTree::countSymbols(uint32_t *symbols, string filename)
     debug.open("forest.txt");
     for(int i=0; i<256; i++)
     {
-        debug<<i<<" : "<<symbols[i]<<endl;
+        debug<<i<<" "<<symbols[i]<<endl;
     }
     fromFile.close();
 }
