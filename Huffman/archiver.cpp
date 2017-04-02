@@ -29,7 +29,7 @@ Archiver::archive(string inputFile,string outFile)
 //    debug.close();
     ifstream input;
     ofstream out;
-    input.open(inputFile);
+    input.open(inputFile , ios_base::binary);
     out.open(outFile , ios_base::binary);
     if(!input.is_open())
     {
@@ -63,7 +63,7 @@ Archiver::unarchive(string inputFile,string outFile)
     ifstream fromFile;
     ofstream toFile;
     fromFile.open(inputFile , ios_base::binary);
-    toFile.open(outFile);
+    toFile.open(outFile , ios_base::binary);
     if(!fromFile.is_open())
     {
         throw "Error open input file";

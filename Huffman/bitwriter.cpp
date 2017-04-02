@@ -65,7 +65,7 @@ BitWriter::binaryWrite(std::ifstream *fromFile, std::string *encodingTable)
     unsigned char c;
     while(1)
     {
-        c=fromFile->get();
+        fromFile->read((char*)&c,1);
         if(fromFile->eof())
         {
             //Если исходный файл кончился , флашим и уходим.
