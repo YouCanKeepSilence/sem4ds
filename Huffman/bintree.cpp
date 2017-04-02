@@ -91,8 +91,13 @@ BinTree::countSymbols(uint32_t *symbols, string filename)
     }
     while(1)
     {
-        unsigned char c;
+        int c;
         c=fromFile.get();
+        cout<<c<<endl;
+        if(c==13)
+        {
+            cout<<"QQQ MOTHERFUCKER"<<endl;
+        }
         if(fromFile.eof())
         {
             cout<<counter<<endl;
@@ -196,10 +201,11 @@ BinTree::createEncoding(string *symbolsEncoding, BinTree *root)
 
             symbolsEncoding[root->getSymbol()] = way;
             root=root->toParent();
+            c=way.back();
+            way.pop_back();
             while(1)
             {
-                c=way.back();
-                way.pop_back();
+
                 if(c=='0' || way.empty())
                 {
                     break;
@@ -211,6 +217,8 @@ BinTree::createEncoding(string *symbolsEncoding, BinTree *root)
                         root=root->toParent();
                     }
                 }
+                c=way.back();
+                way.pop_back();
 
             }
             continue;
