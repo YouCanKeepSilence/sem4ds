@@ -47,9 +47,28 @@ void unarchive(ofstream * toFile , ifstream * fromFile)
     {
         cout<<ex<<endl;
     }
-
+    ofstream debug;
+    debug.open("forest.txt");
+    for(int i=0; i<256; i++)
+    {
+        debug<<i<<" : "<<symbols[i]<<endl;
+    }
+    debug.close();
     BinTree * root=BinTree::createHuffTree(symbols);
     BinTree * realRoot = root;
+    //debug
+    string strmass[256];
+    BinTree::createEncoding(strmass,root);
+
+//    ofstream debug;
+    debug.open("ways.txt");
+    for(int i=0; i<256 ;i++)
+    {
+        debug<<i<<": "<<strmass[i]<<endl<<endl;
+    }
+    debug.close();
+    //-debug
+
     unsigned int step;
     char symbol;
     while(1)
@@ -92,12 +111,12 @@ int main(int argc, char *argv[])
     string out;
     input=argv[1];
     out=argv[2];
-    archive(input,out);
-//    ifstream is;
-//    ofstream os;
-//    is.open("test.huf",ios_base::binary);
-//    os.open("unzip.txt");
-//    unarchive(&os,&is);
+//    archive(input,out);
+    ifstream is;
+    ofstream os;
+    is.open("huff.txt",ios_base::binary);
+    os.open("unzip.txt");
+    unarchive(&os,&is);
     cout<<"end"<<endl;
     return 1;
 }
