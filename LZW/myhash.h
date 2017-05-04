@@ -10,6 +10,7 @@ public:
     MyHash(int size=1024);
     void init();
     void add(std::string key,unsigned short id);
+    bool contains(std::string key);
     unsigned short get(std::string key);
 private:
     unsigned int getHash(std::string key);

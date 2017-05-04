@@ -5,13 +5,18 @@
 class Table
 {
 public:
-    Table(unsigned short maxSize=256);
+    Table(unsigned int maxSize=256);
     void init();
     void add(std::string data);
     bool contains(std::string data);
     unsigned short getIndex(std::string key);
+    unsigned short getLastIndex();
+    unsigned int getRealSize();
+    unsigned int getMaxSize();
+    std::string getString(unsigned short id);
 private:
-    unsigned short maxSize;
+    unsigned int realSize;
+    unsigned int maxSize;
     unsigned short lastIndex;
     std::string * table;
     MyHash hashTable;

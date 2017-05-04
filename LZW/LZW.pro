@@ -7,11 +7,13 @@ SOURCES += main.cpp \
     myhash.cpp \
     element.cpp \
     writer.cpp \
-    table.cpp
+    table.cpp \
+    reader.cpp
 
 HEADERS += \
     myhash.h \
     element.h \
     writer.h \
     tools.h \
-    table.h
+    table.h \
+    reader.h

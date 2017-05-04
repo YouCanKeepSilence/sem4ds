@@ -8,6 +8,19 @@ MyHash::MyHash(int size)
         *it=NULL;
     }
 
+
+}
+
+void MyHash::init()
+{
+    for(int i=0; i<256 ; i++)
+    {
+        char c = char(i);
+        std::string str;
+        str.push_back(c);
+        this->add(str,i);
+    }
+
 }
 
 unsigned int MyHash::getHash(std::string key)
@@ -26,7 +39,6 @@ unsigned int MyHash::getHash(std::string key)
 void MyHash::add(std::string key, unsigned short id)
 {
     int place = getHash(key);
-//    std::cout<<place<<std::endl<<table.size();
     Element* elem = table.at(place);
     if(elem != NULL)
     {
@@ -40,6 +52,31 @@ void MyHash::add(std::string key, unsigned short id)
     {
         table[place] = new Element(key,id);
     }
+}
+
+bool MyHash::contains(std::__1::string key)
+{
+    unsigned int place = getHash(key);
+    Element * elem = table.at(place);
+    if(elem)
+    {
+        if(elem->getData() == key)
+        {
+            return true;
+        }
+        else
+        {
+            while(elem->getNext())
+            {
+                elem=elem->getNext();
+                if(elem->getData() == key)
+                {
+                    return true;
+                }
+            }
+        }
+    }
+    return false;
 }
 
 unsigned short MyHash::get(std::__1::string key)

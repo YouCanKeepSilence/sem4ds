@@ -12,6 +12,7 @@ public:
     void writeCode(unsigned short code);
     void flush();
     void setState(Tools::States state);
+
 private:
     Tools::States state;
     void writeNextBit(bool bit);
