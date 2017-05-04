@@ -4,7 +4,14 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    myhash.cpp
+    myhash.cpp \
+    element.cpp \
+    writer.cpp \
+    table.cpp
 
 HEADERS += \
-    myhash.h
+    myhash.h \
+    element.h \
+    writer.h \
+    tools.h \
+    table.h

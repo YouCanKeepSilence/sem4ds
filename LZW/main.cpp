@@ -1,10 +1,12 @@
 #include <iostream>
 #include "myhash.h"
+#include "writer.h"
 #include <fstream>
 using namespace std;
 
 int main(int argc, char *argv[])
 {
+    system("clear");
 //    if(argc==4)
 //    {
 //        //TODO упаковка
@@ -15,30 +17,27 @@ int main(int argc, char *argv[])
 //        //TODO распаковка
 //        cout<<"Unpack"<<endl;
 //    }
-    ifstream ifs;
-    ifs.open("31.txt");
-    int array[137349];
-    for(int i=0; i< 137349; i++)
+
+    MyHash hash(1024);
+    hash.add("ABC",2);
+    hash.add("ABCD",3);
+    hash.add("A",4);
+    hash.add("AB",5);
+    hash.add("BC",6);
+    try
     {
-        array[i]=0;
+    cout<<hash.get("ABC")<<endl;
+    cout<<hash.get("ABCD")<<endl;
+    cout<<hash.get("A")<<endl;
+    cout<<hash.get("Z")<<endl;
+
+
     }
-    int counter = 0;
-    MyHash hash(137349);
-    while(1)
+    catch(std::runtime_error re)
     {
-        string str;
-        ifs>>str;
-        if(ifs.eof())
-            break;
-        int h = hash.getHash(str);
-        cout<<"Hash for "<<str<<" is "<<h<<endl;
-        array[h]++;
-        counter++;
+        cout<<re.what();
     }
-    for(int j=0; j<137349 ; j++)
-    {
-        if(array[j]>100)
-            cout<<j<<" count "<<array[j]<<endl;
-    }
-    cout<<counter;
+    cout<<hash.get("AB")<<endl;
+    cout<<hash.get("BC")<<endl;
+
 }

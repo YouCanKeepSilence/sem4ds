@@ -1,42 +1,69 @@
 #include "myhash.h"
-
+#include <iostream>
 MyHash::MyHash(int size)
 {
-    table.reserve(size);
-    for(std::vector<int>::iterator it = table.begin() ; it!=table.end(); it++)
+    table.resize(size);
+    for(std::vector<Element*>::iterator it = table.begin() ; it < table.end(); it++)
     {
-        *it=-1;
+        *it=NULL;
     }
 
 }
 
-int MyHash::getHash(std::string str)
+unsigned int MyHash::getHash(std::string key)
 {
-    int hash = 666;
-//    hash = hash >> str.length();
-//    hash *= str[0] * str[str.length()-1];
-//    hash /= (str.length() +3) ;
-    for(int i=0; i<str.length() ; i++)
+    unsigned int hash = 2139062143;
+    for(unsigned int i=0; i<key.length() ; i++)
     {
-        hash = 13*hash + str[i];
+        hash = 37*hash + key[i];
     }
 
     hash = hash % table.capacity();
-
+//    std::cout<<hash<<std::endl;
     return hash;
 }
 
-void MyHash::add(std::string key, uint16_t id)
+void MyHash::add(std::string key, unsigned short id)
 {
     int place = getHash(key);
-    std::vector<int>::iterator it;
-    it = table.begin() + place;
-    if(table.at(place) != -1)
+//    std::cout<<place<<std::endl<<table.size();
+    Element* elem = table.at(place);
+    if(elem != NULL)
     {
-        while(*it!=-1 || it == table.end())
+        while(elem->getNext())
         {
-            it++;
+            elem = elem->getNext();
         }
-        *it = id;
+        elem->setNext(new Element(key, id));
     }
+    else
+    {
+        table[place] = new Element(key,id);
+    }
+}
+
+unsigned short MyHash::get(std::__1::string key)
+{
+    unsigned int place = getHash(key);
+    Element * elem = table.at(place);
+    if(elem)
+    {
+        if(elem->getData() == key)
+        {
+            return elem->getId();
+        }
+        else
+        {
+            while(elem->getNext())
+            {
+                elem=elem->getNext();
+                if(elem->getData() == key)
+                {
+                    return elem->getId();
+                }
+            }
+        }
+    }
+    std::cerr<<"Нет такого элемента вернется 0";
+    return 0;
 }

@@ -2,15 +2,18 @@
 #define MYHASH_H
 
 #include <string>
+#include "element.h"
 #include <vector>
 class MyHash
 {
 public:
     MyHash(int size=1024);
-    int getHash(std::string str);
-    void add(std::string key,uint16_t id);
+    void init();
+    void add(std::string key,unsigned short id);
+    unsigned short get(std::string key);
 private:
-    std::vector<int> table; // TODO Element but not int
+    unsigned int getHash(std::string key);
+    std::vector<Element*> table;
 };
 
 #endif // MYHASH_H
