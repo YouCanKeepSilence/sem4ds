@@ -9,6 +9,7 @@ public:
     void init();
     void add(std::string data);
     bool contains(std::string data);
+    bool contains(unsigned short id);
     unsigned short getIndex(std::string key);
     unsigned short getLastIndex();
     unsigned int getRealSize();

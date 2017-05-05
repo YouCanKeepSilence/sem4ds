@@ -28,24 +28,37 @@ std::__1::ostream *Writer::getStream()
 
 void Writer::writeCode(unsigned short code)
 {
-    unsigned char * bytes;
-    bytes = (unsigned char*)&code;
-//    std::cout<<(int)bytes[0]<<" "<<(int)bytes[1]<<std::endl;
-    unsigned char mask = 0b00000001;
-    std::cout<<8+state<<std::endl;
+
+//    std::cout<<8+state<<std::endl;
+//    std::cout<<"Пишу "<<code<<std::endl;
     for(int i=0; i < 8 + state; i++)
     {
-        std::cout<<"Пишу "<<(int) i/8 <<" байт числа "<<code<<" ";
-        writeNextBit(bytes[(int) i/8] & (mask << i%8));
+//        std::cout<<"Пишу "<<code<<std::endl;//(int) i/8 <<" байт числа "<<code<<" ";
+//        writeNextBit(bytes[(int) i/8] & (mask << i%8));
+        writeNextBit(code & (0b0000000000000001 << i));
+//        if(code & (0b0000000000000001 << i))
+//        {
+//            std::cout<<1;
+//            writeNextBit(true);
+//        }
+//        else
+//        {
+//            std::cout<<0;
+//            writeNextBit(false);
+//        }
+//        if(i==7)
+//        {
+//            std::cout<<" ";
+//        }
     }
-    std::cout<<std::endl;
+//    std::cout<<std::endl;
 }
 
 void Writer::flush()
 {
     if(currentByte)
     {
-        *out<<currentByte;
+        out->put(currentByte);
     }
 }
 
@@ -59,18 +72,26 @@ void Writer::writeNextBit(bool bit)
 
     if(bit)
     {
-        currentByte = currentByte | (0b10000000 >> currentBit);
+        currentByte = currentByte | (0b00000001 << currentBit);
 //        std::cout<<1<<" ";
     }
-    else
-    {
+//    else
+//    {
 //        std::cout<<0<<" ";
-    }
+//    }
     currentBit++;
     if(currentBit > 7 )
     {
         currentBit=0;
-        *out<<currentByte;
+//        for(int i=0; i<8 ;i++)
+//        {
+//            if(currentByte & (0b10000000>>i))
+//                std::cout<<1;
+//            else
+//                std::cout<<0;
+//        }
+//        std::cout<<std::endl;
+        out->put(currentByte);
         currentByte = 0;
     }
 

@@ -48,6 +48,11 @@ bool Table::contains(std::__1::string data)
     return hashTable.contains(data);
 }
 
+bool Table::contains(unsigned short id)
+{
+    return lastIndex >= id;
+}
+
 unsigned short Table::getIndex(std::__1::string key)
 {
     if(hashTable.contains(key))
@@ -85,7 +90,7 @@ std::__1::string Table::getString(unsigned short id)
     }
     else
     {
-        std::cerr<<"нет такого id";
+//        std::cerr<<"нет такого id";
         return "";
     }
 

@@ -10,13 +10,14 @@ public:
     void detach();
     std::istream * getStream();
     void setState(Tools::States state);
+    unsigned short readNextSymbol();
 private:
     Tools::States state;
-    void readNextBit();
+    bool readNextBit();
     char currentByte;
     int currentBit;
 
-    std::ostream *out;
+    std::istream *in;
 };
 
 #endif // READER_H
