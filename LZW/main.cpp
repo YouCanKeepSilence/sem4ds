@@ -25,13 +25,14 @@ void packing(std::string inName,std::string outName,unsigned short size)
         return;
     }
     Writer writer;
-
+    ofstream debug;
+    debug.open("debugWrite.txt");
     uint8_t maxSize = size;
     out.write("LZW5",4);
     out.put(maxSize);
 
     writer.attach(&out);
-    writer.setState(Tools::first);
+    writer.setState(Tools::zero);
     Table strings(pow(2,size));
     string currentString="";
     unsigned int flag = 256;
@@ -47,7 +48,10 @@ void packing(std::string inName,std::string outName,unsigned short size)
         {
             if(!currentString.empty())
             {
+                cout<<"Последняя строка "<<strings.getIndex(currentString)<<endl;
+                debug<<strings.getIndex(currentString);
                 writer.writeCode(strings.getIndex(currentString));
+                writer.flush();
             }
             break;
         }
@@ -65,32 +69,35 @@ void packing(std::string inName,std::string outName,unsigned short size)
             strings.add(currentString);
 //            cout<<"Добавлена строка "<<currentString<<" ее код "<<strings.getIndex(currentString)<<" выписан код "<<strings.getIndex(bufstr)<<endl;
             currentString = c;
-            if((strings.getRealSize()-1)%flag==0 && strings.getRealSize()< strings.getMaxSize()) // для холодного старта
+            if((strings.getRealSize()-1)%flag==0 && strings.getRealSize() < strings.getMaxSize()) // для холодного старта
             {
 //                if(first)
 //                {
 //                    first = false;
 //                    writer.writeCode(strings.getIndex(bufstr));
 //                    writer.setState(Tools::second);
-////                    cout<<"Начальный пинок "<<strings.getRealSize();
+//                    cout<<endl<<"Начальный пинок "<<strings.getRealSize();
 //                    continue;
 //                }
                 mark++;
 //                int state = mark +1;
+                debug<<strings.getIndex(bufstr)<<endl;
                 writer.writeCode(strings.getIndex(bufstr));
                 cout<<"Текущий размер : "<<strings.getRealSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
                 writer.setState((Tools::States)mark);
+                debug<<"State"<<mark;
                 flag *= 2;
                 continue;
             }
             else
             {
+                debug<<strings.getIndex(bufstr)<<endl;
                 writer.writeCode(strings.getIndex(bufstr));
                 continue;
             }
         }
     }
-    writer.flush();
+//    writer.flush();
     cout<<"realSize "<<strings.getRealSize()<<endl;
     in.close();
     out.close();
@@ -122,12 +129,13 @@ void unpacking(std::string inName, std::string outName)
         return;
     }
     Reader reader;
-
+    ofstream debug;
+    debug.open("debugRead.txt");
     short size = in.get();
     cout<<size;
     Table strings(pow(2,size));
     reader.attach(&in);
-    reader.setState(Tools::first);
+    reader.setState(Tools::zero);
     int flag = 256;
     int mark = 0;
     unsigned short old=0;
@@ -138,20 +146,22 @@ void unpacking(std::string inName, std::string outName)
     while(1)
     {
         old = code;
+        debug<<old<<endl;
         if((strings.getRealSize())%flag==0 && (strings.getRealSize() < strings.getMaxSize()))
         {
             cout<<"размер "<< strings.getRealSize()<<" состояние изменено с "<<mark;
             mark++;
             reader.setState((Tools::States)mark);
             cout<<" на "<<mark<<endl;
+            debug<<"State"<<mark;
             flag *= 2;
-
         }
         code = reader.readNextSymbol();
         if(in.eof())
         {
             break;
         }
+
         if(strings.contains(code))
         {
             out<<strings.getString(code);
@@ -165,6 +175,7 @@ void unpacking(std::string inName, std::string outName)
             cout<<"No, string : "<<(bufstr + bufstr[0])<<endl;
             strings.add(bufstr + bufstr[0]);
         }
+
     }
 
     in.close();
@@ -182,7 +193,7 @@ int main(int argc, char *argv[])
 //        unsigned short size;
 //        str>>size;
         packing(argv[1],argv[2],atoi(argv[3]));
-        unsigned short num = 65535;
+        unsigned short num = 46;
         unsigned short mask = 0b1000000000000000;
         for(int i = 0; i<16;i++)
         {

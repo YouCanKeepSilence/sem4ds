@@ -21,7 +21,6 @@ void Table::init()
         lastIndex++;
         realSize++;
     }
-//    std::cout<<realSize;
     hashTable.init();
 
 }
