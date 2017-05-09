@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <ctime>
 using namespace std;
 
 void packing(std::string inName,std::string outName,unsigned short size)
@@ -42,7 +43,8 @@ void packing(std::string inName,std::string outName,unsigned short size)
     {
 
         char c=in.get();
-
+        unsigned short oldId;
+        unsigned short newId;
         if(in.eof())
         {
             if(!currentString.empty())
@@ -148,8 +150,8 @@ void unpacking(std::string inName, std::string outName)
         code = reader.readNextSymbol();
         if(in.eof())
         {
-//            cout<<old<<endl;
-//            cout<<code<<endl;
+            cout<<old<<endl;
+            cout<<code<<endl;
             out<<strings.getString(code);
             break;
         }
@@ -177,6 +179,7 @@ void unpacking(std::string inName, std::string outName)
 int main(int argc, char *argv[])
 {
     system("clear");
+//    clock_t start = clock();
     if(argc==4)
     {
         //TODO упаковка
@@ -189,5 +192,7 @@ int main(int argc, char *argv[])
         unpacking(argv[1],argv[2]);
         cout<<"Unpack"<<endl;
     }
+    clock_t end = clock();
+    cout<<(((float)end) / CLOCKS_PER_SEC)<<" секунд"<<endl;
     cout<<"goodbye"<<endl;
 }

@@ -8,8 +8,10 @@ public:
     Table(unsigned int maxSize=256);
     void init();
     void add(std::string data);
-    bool contains(std::string data);
+    bool containsAndGetIndex(std::__1::string key, unsigned short &id);
     bool contains(unsigned short id);
+    bool contains(std::__1::string data);
+    bool ifContainsGetElseAdd(std::string key, unsigned short &oldId, unsigned short &newId);
     unsigned short getIndex(std::string key);
     unsigned short getLastIndex();
     unsigned int getRealSize();

@@ -42,9 +42,16 @@ void Table::add(std::__1::string data)
 
 }
 
+
+
 bool Table::contains(std::__1::string data)
 {
     return hashTable.contains(data);
+}
+
+bool Table::ifContainsGetElseAdd(std::__1::string key, unsigned short &oldId, unsigned short &newId)
+{
+
 }
 
 bool Table::contains(unsigned short id)
@@ -54,17 +61,22 @@ bool Table::contains(unsigned short id)
 
 unsigned short Table::getIndex(std::__1::string key)
 {
-    if(hashTable.contains(key))
-    {
-        return hashTable.get(key);
-    }
-    else
-    {
-        std::cerr<<"Нет такого элемента вернется 0"<<std::endl;
-        return 0;
-    }
-
+    return hashTable.get(key);
 }
+
+//bool Table::containsAndGetIndex(std::__1::string key, unsigned short &id)
+//{
+//    if(hashTable.containsAndGet(key,id))
+//    {
+//        return true;
+//    }
+//    else
+//    {
+////        std::cerr<<"Нет такого элемента вернется 0"<<std::endl;
+//        return false;
+//    }
+
+//}
 
 unsigned short Table::getLastIndex()
 {

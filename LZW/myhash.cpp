@@ -7,7 +7,7 @@ MyHash::MyHash(int size)
     {
         *it=NULL;
     }
-
+//    previousHash = 2139062143;
 
 }
 
@@ -25,21 +25,18 @@ void MyHash::init()
 
 unsigned int MyHash::getHash(std::string key)
 {
-    unsigned int hash = 2139062143;
-    for(unsigned int i=0; i<key.length() ; i++)
+    if(key.length()==1)
     {
-        hash = 37*hash + key[i];
-
+        previousHash = 2139062143;
     }
-
-    hash = hash % table.capacity();
-//    std::cout<<hash<<std::endl;
-    return hash;
+//    previousHash = previousHash >> 1;
+    previousHash *= 37 * key[key.length()-1];
+    return previousHash % table.capacity();
 }
 
 void MyHash::add(std::string key, unsigned short id)
 {
-    int place = getHash(key);
+    unsigned int place = getHash(key);
     Element* elem = table.at(place);
     if(elem != NULL)
     {
@@ -53,6 +50,36 @@ void MyHash::add(std::string key, unsigned short id)
     {
         table[place] = new Element(key,id);
     }
+}
+
+bool MyHash::ifContainsGetElseAdd(std::__1::string key,unsigned short &oldId, unsigned short &newId)
+{
+    unsigned int place = getHash(key);
+    Element * elem = table.at(place);
+    if(elem)
+    {
+        while(1)
+        {
+            if(elem->getData() == key)
+            {
+                oldId = elem->getId();
+                return true;
+            }
+            else if(elem->getNext())
+            {
+                elem=elem->getNext();
+                continue;
+            }
+            else
+            {
+                elem->setNext(new Element(key,newId));
+                return false;
+            }
+        }
+
+    }
+
+    return false;
 }
 
 bool MyHash::contains(std::__1::string key)
