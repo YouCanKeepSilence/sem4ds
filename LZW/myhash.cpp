@@ -29,6 +29,7 @@ unsigned int MyHash::getHash(std::string key)
     for(unsigned int i=0; i<key.length() ; i++)
     {
         hash = 37*hash + key[i];
+
     }
 
     hash = hash % table.capacity();

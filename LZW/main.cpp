@@ -38,7 +38,6 @@ void packing(std::string inName,std::string outName,unsigned short size)
     unsigned int flag = 256;
     unsigned int mark = 0;
     cout<<strings.getRealSize();
-//    bool first = true;
     while(1)
     {
 
@@ -71,16 +70,7 @@ void packing(std::string inName,std::string outName,unsigned short size)
             currentString = c;
             if((strings.getRealSize()-1)%flag==0 && strings.getRealSize() < strings.getMaxSize()) // для холодного старта
             {
-//                if(first)
-//                {
-//                    first = false;
-//                    writer.writeCode(strings.getIndex(bufstr));
-//                    writer.setState(Tools::second);
-//                    cout<<endl<<"Начальный пинок "<<strings.getRealSize();
-//                    continue;
-//                }
                 mark++;
-//                int state = mark +1;
                 debug<<strings.getIndex(bufstr)<<endl;
                 writer.writeCode(strings.getIndex(bufstr));
                 cout<<"Текущий размер : "<<strings.getRealSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
@@ -97,7 +87,6 @@ void packing(std::string inName,std::string outName,unsigned short size)
             }
         }
     }
-//    writer.flush();
     cout<<"realSize "<<strings.getRealSize()<<endl;
     in.close();
     out.close();
@@ -159,6 +148,9 @@ void unpacking(std::string inName, std::string outName)
         code = reader.readNextSymbol();
         if(in.eof())
         {
+//            cout<<old<<endl;
+//            cout<<code<<endl;
+            out<<strings.getString(code);
             break;
         }
 
@@ -188,24 +180,7 @@ int main(int argc, char *argv[])
     if(argc==4)
     {
         //TODO упаковка
-//        stringstream str;
-//        str<<argv[3];
-//        unsigned short size;
-//        str>>size;
         packing(argv[1],argv[2],atoi(argv[3]));
-        unsigned short num = 46;
-        unsigned short mask = 0b1000000000000000;
-        for(int i = 0; i<16;i++)
-        {
-            if(num & (mask >> i))
-            {
-                cout<<1;
-            }
-            else
-            {
-                cout<<0;
-            }
-        }
         cout<<"Pack"<<endl;
     }
     else if(argc==3)
@@ -214,9 +189,5 @@ int main(int argc, char *argv[])
         unpacking(argv[1],argv[2]);
         cout<<"Unpack"<<endl;
     }
-
-    cout<<"hello"<<endl;
     cout<<"goodbye"<<endl;
-
-
 }

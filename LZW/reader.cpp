@@ -51,6 +51,10 @@ bool Reader::readNextBit()
     {
         currentBit = 0 ;
         currentByte = in->get();
+        if(in->eof())
+        {
+            return false;
+        }
     }
     bool bit = false;
     unsigned char mask = 0b00000001;
