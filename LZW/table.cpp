@@ -25,7 +25,7 @@ void Table::init()
 
 }
 
-void Table::add(std::__1::string data)
+void Table::add(std::string data)
 {
     if(lastIndex > maxSize)
     {
@@ -43,13 +43,13 @@ void Table::add(std::__1::string data)
 }
 
 
+bool Table::contains(std::string data)
 
-bool Table::contains(std::__1::string data)
 {
     return hashTable.contains(data);
 }
 
-bool Table::ifContainsGetElseAdd(std::__1::string key, unsigned short &oldId, unsigned short &newId)
+bool Table::ifContainsGetElseAdd(std::string key, unsigned short &oldId, unsigned short &newId)
 {
 
 }
@@ -59,7 +59,7 @@ bool Table::contains(unsigned short id)
     return lastIndex >= id;
 }
 
-unsigned short Table::getIndex(std::__1::string key)
+unsigned short Table::getIndex(std::string key)
 {
     return hashTable.get(key);
 }
@@ -93,7 +93,7 @@ unsigned int Table::getMaxSize()
     return maxSize;
 }
 
-std::__1::string Table::getString(unsigned short id)
+std::string Table::getString(unsigned short id)
 {
     if(id < lastIndex)
     {

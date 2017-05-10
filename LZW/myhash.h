@@ -10,7 +10,7 @@ public:
     MyHash(int size=1024);
     void init();
     void add(std::string key,unsigned short id);
-    bool ifContainsGetElseAdd(std::__1::string key, unsigned short &oldId, unsigned short &newId);
+    bool ifContainsGetElseAdd(std::string key, unsigned short &oldId, unsigned short &newId);
     bool contains(std::string key);
     unsigned short get(std::string key);
 private:

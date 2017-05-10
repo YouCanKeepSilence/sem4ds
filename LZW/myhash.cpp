@@ -52,7 +52,8 @@ void MyHash::add(std::string key, unsigned short id)
     }
 }
 
-bool MyHash::ifContainsGetElseAdd(std::__1::string key,unsigned short &oldId, unsigned short &newId)
+
+bool MyHash::ifContainsGetElseAdd(std::string key,unsigned short &oldId, unsigned short &newId)
 {
     unsigned int place = getHash(key);
     Element * elem = table.at(place);
@@ -82,7 +83,7 @@ bool MyHash::ifContainsGetElseAdd(std::__1::string key,unsigned short &oldId, un
     return false;
 }
 
-bool MyHash::contains(std::__1::string key)
+bool MyHash::contains(std::string key)
 {
     unsigned int place = getHash(key);
     Element * elem = table.at(place);
@@ -107,7 +108,7 @@ bool MyHash::contains(std::__1::string key)
     return false;
 }
 
-unsigned short MyHash::get(std::__1::string key)
+unsigned short MyHash::get(std::string key)
 {
     unsigned int place = getHash(key);
     Element * elem = table.at(place);

@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cmath>
 #include <ctime>
+#include <cstring>
 using namespace std;
 
 void packing(std::string inName,std::string outName,unsigned short size)

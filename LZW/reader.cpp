@@ -7,7 +7,7 @@ Reader::Reader()
     this->currentByte = 0;
 }
 
-void Reader::attach(std::__1::istream *in)
+void Reader::attach(std::istream *in)
 {
     this->in = in;
     this->currentBit = 8;
@@ -21,7 +21,7 @@ void Reader::detach()
     this->currentByte = 0;
 }
 
-std::__1::istream *Reader::getStream()
+std::istream *Reader::getStream()
 {
     return in;
 }
