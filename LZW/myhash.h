@@ -14,6 +14,7 @@ public:
     unsigned short get(std::string key);
 private:
     unsigned int getHash(std::string key);
+    std::vector<std::string> strings;
     std::vector<Element*> table;
 };
 

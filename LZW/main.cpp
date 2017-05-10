@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include "mytable.h"
 using namespace std;
 
 void packing(std::string inName,std::string outName,unsigned short size)
@@ -33,11 +34,14 @@ void packing(std::string inName,std::string outName,unsigned short size)
 
     writer.attach(&out);
     writer.setState(Tools::zero);
-    Table strings(pow(2,size));
+//    Table strings(pow(2,size));
+    MyTable strings(pow(2,size));
     string currentString="";
     unsigned int flag = 256;
     unsigned int mark = 0;
-    cout<<strings.getRealSize();
+    unsigned short id;
+    cout<<strings.getSize();
+//    cout<<strings.getRealSize();
     while(1)
     {
 
@@ -47,9 +51,10 @@ void packing(std::string inName,std::string outName,unsigned short size)
         {
             if(!currentString.empty())
             {
-                cout<<"Последняя строка "<<strings.getIndex(currentString)<<endl;
-                debug<<strings.getIndex(currentString);
-                writer.writeCode(strings.getIndex(currentString));
+                int index=strings.get(currentString);
+                cout<<"Последняя строка "<<index<<endl;
+//                debug<<strings.getIndex(currentString);
+                writer.writeCode(index);
                 writer.flush();
             }
             break;
@@ -63,17 +68,19 @@ void packing(std::string inName,std::string outName,unsigned short size)
         }
         else
         {
-            string bufstr = currentString;
+//            string bufstr = currentString;
+//            id = strings.get(currentString);
+            id = strings.getCurrentParentIndex();
             currentString.push_back(c);
             strings.add(currentString);
 //            cout<<"Добавлена строка "<<currentString<<" ее код "<<strings.getIndex(currentString)<<" выписан код "<<strings.getIndex(bufstr)<<endl;
             currentString = c;
-            if((strings.getRealSize()-1)%flag==0 && strings.getRealSize() < strings.getMaxSize()) // для холодного старта
+            if((strings.getSize()-1)%flag==0 && strings.getSize() < strings.getMaxSize()) // для холодного старта
             {
                 mark++;
-                debug<<strings.getIndex(bufstr)<<endl;
-                writer.writeCode(strings.getIndex(bufstr));
-                cout<<"Текущий размер : "<<strings.getRealSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
+                debug<<id<<endl;
+                writer.writeCode(id);
+                cout<<"Текущий размер : "<<strings.getSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
                 writer.setState((Tools::States)mark);
                 debug<<"State"<<mark;
                 flag *= 2;
@@ -81,13 +88,13 @@ void packing(std::string inName,std::string outName,unsigned short size)
             }
             else
             {
-                debug<<strings.getIndex(bufstr)<<endl;
-                writer.writeCode(strings.getIndex(bufstr));
+                debug<<id<<endl;
+                writer.writeCode(id);
                 continue;
             }
         }
     }
-    cout<<"realSize "<<strings.getRealSize()<<endl;
+    cout<<"realSize "<<strings.getSize()<<endl;
     in.close();
     out.close();
     return;
@@ -121,8 +128,16 @@ void unpacking(std::string inName, std::string outName)
     ofstream debug;
     debug.open("debugRead.txt");
     short size = in.get();
-    cout<<size;
-    Table strings(pow(2,size));
+//    cout<<size;
+    vector<string> strings;
+    for(int i=0; i< 256; i++)
+    {
+        string str;
+        str.push_back((char)i);
+        strings.push_back(str);
+    }
+    unsigned int maxSize = pow(2,size);
+//    strings.resize(pow(2,size));
     reader.attach(&in);
     reader.setState(Tools::zero);
     int flag = 256;
@@ -130,15 +145,15 @@ void unpacking(std::string inName, std::string outName)
     unsigned short old=0;
     unsigned short code=0;
     code = reader.readNextSymbol();
-    cout<<strings.getRealSize();
-    out<<strings.getString(code);
+    cout<<strings.size()<<endl;
+    out<<strings[code];
     while(1)
     {
         old = code;
         debug<<old<<endl;
-        if((strings.getRealSize())%flag==0 && (strings.getRealSize() < strings.getMaxSize()))
+        if(strings.size()%flag==0 && (strings.size() < maxSize))
         {
-            cout<<"размер "<< strings.getRealSize()<<" состояние изменено с "<<mark;
+            cout<<"размер "<< strings.size()<<" состояние изменено с "<<mark;
             mark++;
             reader.setState((Tools::States)mark);
             cout<<" на "<<mark<<endl;
@@ -150,22 +165,23 @@ void unpacking(std::string inName, std::string outName)
         {
 //            cout<<old<<endl;
 //            cout<<code<<endl;
-            out<<strings.getString(code);
+//            out<<strings.getString(code);
             break;
         }
 
-        if(strings.contains(code))
+        if((code > strings.size()) | (!strings.at(code).empty() ))
         {
-            out<<strings.getString(code);
-            cout<<"Yes, string : "<<strings.getString(code)<<endl;
-            strings.add(strings.getString(old) + strings.getString(code)[0]);
+            out<<strings[code];
+            cout<<"Yes, string : "<<strings[code]<<endl;
+            strings.push_back(strings[old] + strings[code][0]);
         }
         else
         {
-            string bufstr= strings.getString(old);
-            out<<(bufstr + bufstr[0]);
-            cout<<"No, string : "<<(bufstr + bufstr[0])<<endl;
-            strings.add(bufstr + bufstr[0]);
+            string bufstr= strings[old];
+            string toWrite = bufstr + bufstr[0];
+            out.write(toWrite.c_str(),toWrite.length());
+            cout<<"No, string : "<<toWrite<<endl;
+            strings.push_back(toWrite);
         }
 
     }

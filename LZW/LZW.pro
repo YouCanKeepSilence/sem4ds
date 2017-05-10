@@ -8,7 +8,8 @@ SOURCES += main.cpp \
     element.cpp \
     writer.cpp \
     table.cpp \
-    reader.cpp
+    reader.cpp \
+    mytable.cpp
 
 HEADERS += \
     myhash.h \
@@ -16,4 +17,5 @@ HEADERS += \
     writer.h \
     tools.h \
     table.h \
-    reader.h
+    reader.h \
+    mytable.h
