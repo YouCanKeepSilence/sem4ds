@@ -31,12 +31,17 @@ void Reader::setState(Tools::States state)
     this->state = state;
 }
 
-unsigned short Reader::readNextSymbol()
+int Reader::readNextSymbol()
 {
-    unsigned short result=0;
+    int result=0;
     unsigned short mask = 0b0000000000000001;
     for(int i = 0 ; i < 8+ state; i++)
     {
+        if(in->eof() && (i==1 || i==8))
+        {
+            result = -1;
+            break;
+        }
         if(readNextBit())
         {
             result = result | (mask << i);
