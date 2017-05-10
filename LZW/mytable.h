@@ -15,14 +15,17 @@ public:
     unsigned int getMaxSize();
     unsigned short get(std::string data);
     unsigned short getCurrentParentIndex();
+    void resetOldHash();
 private:
     unsigned int getHash(std::string key);
     void init();
     unsigned int indexOfLast;
     unsigned int maxSize;
     unsigned int parentIndex;
+    long oldHash;
     std::vector<std::string> strings;
     std::vector<NElement*> hash;
+    NElement * forNew;
 
 };
 

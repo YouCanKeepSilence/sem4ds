@@ -5,7 +5,8 @@ typedef std::vector<std::string>::iterator stringIterator ;
 typedef std::vector<NElement*>::iterator elemIterator;
 MyTable::MyTable(unsigned int maxSize) :
     indexOfLast(0),
-    maxSize(maxSize)
+    maxSize(maxSize),
+    forNew(NULL)
 
 {
     strings.resize(maxSize);
@@ -59,6 +60,7 @@ bool MyTable::contains(std::string key)
 
             return false;
         }
+        forNew = item;
         item = item->next;
 
     }
@@ -75,18 +77,20 @@ void MyTable::add(std::string data)
     strings[indexOfLast] = data;
     //add to hash
     unsigned int hashNum = getHash(data);
-    NElement * item = hash.at(hashNum);
-    if(item)
+//    NElement * item = hash.at(hashNum);
+    if(forNew)
     {
-        while(1)
-        {
-            if(!item->next)
-            {
-                item->next = new NElement(parentIndex,lastSym,indexOfLast);
-                break;
-            }
-            item=item->next;
-        }
+        forNew = new NElement(parentIndex,lastSym,indexOfLast);
+        forNew = NULL;
+//        while(1)
+//        {
+//            if(!item->next)
+//            {
+//                item->next = new NElement(parentIndex,lastSym,indexOfLast);
+//                break;
+//            }
+//            item=item->next;
+//        }
     }
     else
     {
@@ -140,8 +144,17 @@ unsigned short MyTable::getCurrentParentIndex()
     return parentIndex;
 }
 
+void MyTable::resetOldHash()
+{
+    oldHash = -1;
+}
+
 unsigned int MyTable::getHash(std::string key)
 {
+    if(oldHash != -1)
+    {
+        return (unsigned int)oldHash % this->hash.capacity();
+    }
     if(key.length() == 1)
     {
         std::cout<<"HASH SINGLE "<<(unsigned short)(unsigned char)key[0]<<std::endl;
@@ -149,7 +162,7 @@ unsigned int MyTable::getHash(std::string key)
     }
     unsigned char sym = key[key.length()-1] + 1 ;
     unsigned int hash = 2139062143;
-    hash = hash * 37  * sym * parentIndex ;
+    hash *= sym ^ parentIndex;//37  * key.length() * sym * parentIndex ;
     hash = hash % this->hash.capacity();
     std::cout<<"HASH LONG "<<hash<<std::endl;
     return hash;

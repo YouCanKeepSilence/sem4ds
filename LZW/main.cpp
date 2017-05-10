@@ -49,14 +49,15 @@ void packing(std::string inName,std::string outName,unsigned short size)
 
         if(in.eof())
         {
-            if(!currentString.empty())
-            {
-                int index=strings.get(currentString);
-                cout<<"Последняя строка "<<index<<endl;
+//            if(!currentString.empty())
+//            {
+//                int index=strings.get(currentString);
+//                cout<<"Последняя строка "<<index<<endl;
 //                debug<<strings.getIndex(currentString);
-                writer.writeCode(index);
-                writer.flush();
-            }
+//                writer.writeCode(index);
+
+//            }
+            writer.flush();
             break;
         }
         if(strings.contains(currentString+c))
@@ -64,7 +65,7 @@ void packing(std::string inName,std::string outName,unsigned short size)
 
             currentString.push_back(c);
 //            cout<<"Есть строка "<<currentString<<" продолжаю "<<endl;
-            continue;
+//            continue;
         }
         else
         {
@@ -84,15 +85,16 @@ void packing(std::string inName,std::string outName,unsigned short size)
                 writer.setState((Tools::States)mark);
                 debug<<"State"<<mark;
                 flag *= 2;
-                continue;
+//                continue;
             }
             else
             {
                 debug<<id<<endl;
                 writer.writeCode(id);
-                continue;
+//                continue;
             }
         }
+        strings.resetOldHash();
     }
     cout<<"realSize "<<strings.getSize()<<endl;
     in.close();
@@ -193,6 +195,7 @@ void unpacking(std::string inName, std::string outName)
 int main(int argc, char *argv[])
 {
     system("clear");
+    clock_t start = clock();
     if(argc==4)
     {
         //TODO упаковка
@@ -205,5 +208,7 @@ int main(int argc, char *argv[])
         unpacking(argv[1],argv[2]);
         cout<<"Unpack"<<endl;
     }
-    cout<<"goodbye"<<endl;
+
+    cout<<"goodbye "<<endl;
+    cout<<"time : "<<(clock() - start) / CLOCKS_PER_SEC<<" s "<<endl;
 }
