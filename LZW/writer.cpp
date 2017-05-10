@@ -7,7 +7,7 @@ Writer::Writer()
     out=NULL;
 }
 
-void Writer::attach(std::__1::ostream *out)
+void Writer::attach(std::ostream *out)
 {
     this->out = out;
     this->currentBit=0;
@@ -21,7 +21,7 @@ void Writer::detach()
     this->currentByte=0;
 }
 
-std::__1::ostream *Writer::getStream()
+std::ostream *Writer::getStream()
 {
     return this->out;
 }

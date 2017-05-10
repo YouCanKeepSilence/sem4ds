@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <cmath>
+#include <cstring>
 using namespace std;
 
 void packing(std::string inName,std::string outName,unsigned short size)
