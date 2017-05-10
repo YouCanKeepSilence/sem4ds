@@ -10,7 +10,7 @@ public:
     void detach();
     std::istream * getStream();
     void setState(Tools::States state);
-    unsigned short readNextSymbol();
+    int readNextSymbol();
 private:
     Tools::States state;
     bool readNextBit();

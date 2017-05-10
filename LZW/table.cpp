@@ -27,7 +27,7 @@ void Table::init()
 
 void Table::add(std::string data)
 {
-    if(lastIndex > maxSize)
+    if(lastIndex +1 > maxSize)
     {
 //        std::cerr<<"превышен размер таблицы."<<std::endl;
         return;

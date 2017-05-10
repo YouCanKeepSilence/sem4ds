@@ -129,8 +129,14 @@ void unpacking(std::string inName, std::string outName)
     int flag = 256;
     int mark = 0;
     unsigned short old=0;
-    unsigned short code=0;
+    int code=0;
+    int state = 1;
     code = reader.readNextSymbol();
+    if(!state)
+    {
+        std::cout<<"Empty archive"<<std::endl;
+        return;
+    }
     cout<<strings.getRealSize();
     out<<strings.getString(code);
     while(1)
@@ -147,11 +153,12 @@ void unpacking(std::string inName, std::string outName)
             flag *= 2;
         }
         code = reader.readNextSymbol();
-        if(in.eof())
+        if(in.eof() && code == -1)//(state==false))
         {
+//            std::cout <<"Its EOF"<< EOF;
 //            cout<<old<<endl;
 //            cout<<code<<endl;
-            out<<strings.getString(code);
+//            out<<strings.getString(code);
             break;
         }
 

@@ -65,6 +65,7 @@ void Writer::writeNextBit(bool bit)
     if(currentBit > 7 )
     {
         currentBit=0;
+        out->put(currentByte);
         for(int i=0; i<8 ;i++)
         {
             if(currentByte & (0b10000000 >> i))
@@ -73,7 +74,7 @@ void Writer::writeNextBit(bool bit)
                 std::cout<<0;
         }
 //        std::cout<<std::endl;
-        out->put(currentByte);
+
         currentByte = 0;
     }
 
