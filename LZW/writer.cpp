@@ -7,6 +7,11 @@ Writer::Writer()
     out=NULL;
 }
 
+Writer::~Writer()
+{
+    this->detach();
+}
+
 void Writer::attach(std::__1::ostream *out)
 {
     this->out = out;
@@ -28,8 +33,11 @@ std::__1::ostream *Writer::getStream()
 
 void Writer::writeCode(unsigned short code)
 {
-
-
+    if(!out)
+    {
+        std::cerr<<"No out thread attached "<<std::endl;
+        return;
+    }
 //    std::cout<<"Пишу "<<code<<std::endl;
     for(int i=0; i < 8 + state; i++)
     {
@@ -40,9 +48,14 @@ void Writer::writeCode(unsigned short code)
 
 void Writer::flush()
 {
+    if(!out)
+    {
+        std::cerr<<"No out thread attached "<<std::endl;
+        return;
+    }
     if(currentBit!=0)
     {
-        std::cout<<"flushing "<<currentByte<<std::endl;
+//        std::cout<<"flushing "<<currentByte<<std::endl;
         out->put(currentByte);
     }
 }

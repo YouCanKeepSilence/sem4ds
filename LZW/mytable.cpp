@@ -6,13 +6,10 @@ typedef std::vector<NElement*>::iterator elemIterator;
 MyTable::MyTable(unsigned int maxSize) :
     indexOfLast(0),
     maxSize(maxSize),
-    oldHash(-1),
-    forNew(NULL)
-
-
+    oldHash(-1)
 {
     strings.resize(maxSize);
-    hash.resize(maxSize*2);
+    hash.resize(maxSize);
     for(elemIterator it= hash.begin(); it != hash.end() ; it++)
     {
         *it = NULL;
@@ -22,10 +19,17 @@ MyTable::MyTable(unsigned int maxSize) :
         std::string str;
         str.push_back((char)i);
         this->add(i,-1,str);
-//        strings[i] = str;
-//        indexOfLast++;
-//        hash[i]=new NElement(-1,char(i), i);
     }
+}
+
+MyTable::~MyTable()
+{
+    for(elemIterator it = hash.begin() ; it != hash.end() ; it++)
+    {
+        delete *it;
+    }
+    hash.clear();
+    strings.clear();
 }
 
 bool MyTable::contains(unsigned short id)
@@ -50,20 +54,6 @@ bool MyTable::contains(int parent, unsigned char sym)
     }
     while(item && !(item->parentId==parent && item->symbol==sym))
     {
-//        if(item)
-//        {
-//            if(item->parentId == parent && item->symbol==sym)
-//            {
-//                parentIndex = item->id;
-//                return true;
-//            }
-//        }
-//        else
-//        {
-
-//            return false;
-//        }
-//        forNew = item;
         item = item->next;
     }
     if(item)
@@ -80,7 +70,6 @@ bool MyTable::contains(int parent, unsigned char sym)
 
 void MyTable::add(unsigned char lastSymbol , int parent , std::string data)
 {
-//    unsigned char lastSym = data[data.length()-1];
     if(indexOfLast >= maxSize)
     {
         parentIndex=lastSymbol;
@@ -90,10 +79,8 @@ void MyTable::add(unsigned char lastSymbol , int parent , std::string data)
     //add to hash
     unsigned int hashNum = getHash(lastSymbol,parent);
     NElement * item = hash.at(hashNum);
-    if(item)//forNew)
+    if(item)
     {
-//        forNew->next = new NElement(parentIndex,lastSym,indexOfLast);
-//        forNew = NULL;
         while(1)
         {
             if(!item->next)
@@ -106,7 +93,6 @@ void MyTable::add(unsigned char lastSymbol , int parent , std::string data)
     }
     else
     {
-//        unsigned int hashNum = getHash(data);
         hash[hashNum] = new NElement(parent,lastSymbol,indexOfLast);
     }
     parentIndex=lastSymbol;
@@ -121,35 +107,6 @@ unsigned int MyTable::getSize()
 unsigned int MyTable::getMaxSize()
 {
     return maxSize;
-}
-
-unsigned short MyTable::get(std::string data)
-{
-    unsigned int hashNum ;//= getHash(data);
-    NElement * item = hash.at(hashNum);
-    if(!item)
-    {
-        std::cerr<<"ОШИБКА НЕТ ТАКОЙ ЭЛЕМЕНТА"<<std::endl;
-        return 0;
-    }
-    while(1)
-    {
-        if(item)
-        {
-            if(strings.at(item->id) == data)
-            {
-//                std::string str = strings[item->id];
-                return item->id;
-            }
-        }
-        else
-        {
-            std::cerr<<"ОШИБКА НЕТ ТАКОЙ ЭЛЕМЕНТА"<<std::endl;
-            return 0;
-        }
-        item = item->next;
-
-    }
 }
 
 unsigned short MyTable::getCurrentParentIndex()
@@ -168,16 +125,9 @@ unsigned int MyTable::getHash(unsigned char symbol, int parent)
     {
         return (unsigned int)oldHash % this->hash.capacity();
     }
-//    if(key.length() == 1)
-//    {
-//        std::cout<<"HASH SINGLE "<<(unsigned short)(unsigned char)key[0]<<std::endl;
-//        return (unsigned char)key[0];
-//    }
-//    unsigned char sym = symbol[symbol.length()-1] + 1 ;
     unsigned int hash;// = 2139062143;
     hash = symbol ^ parent;//37  * key.length() * sym * parentIndex ;
     hash = hash % this->hash.capacity();
-//    std::cout<<"HASH LONG "<<hash<<std::endl;
     return hash;
 
 }

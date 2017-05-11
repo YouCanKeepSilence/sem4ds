@@ -8,12 +8,12 @@ class MyTable
 {
 public:
     MyTable(unsigned int maxSize = 256);
+    ~MyTable();
     bool contains(unsigned short id);
     bool contains(int parent, unsigned char sym);
     void add(unsigned char lastSymbol, int parent, std::string data);
     unsigned int getSize();
     unsigned int getMaxSize();
-    unsigned short get(std::string data);
     unsigned short getCurrentParentIndex();
     void resetOldHash();
 private:
@@ -25,7 +25,7 @@ private:
     long oldHash;
     std::vector<std::string> strings;
     std::vector<NElement*> hash;
-    NElement * forNew;
+//    NElement * forNew;
 
 };
 

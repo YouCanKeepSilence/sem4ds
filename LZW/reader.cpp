@@ -7,6 +7,11 @@ Reader::Reader()
     this->currentByte = 0;
 }
 
+Reader::~Reader()
+{
+    this->detach();
+}
+
 void Reader::attach(std::__1::istream *in)
 {
     this->in = in;
@@ -21,7 +26,7 @@ void Reader::detach()
     this->currentByte = 0;
 }
 
-std::__1::istream *Reader::getStream()
+std::istream *Reader::getStream()
 {
     return in;
 }
@@ -33,6 +38,11 @@ void Reader::setState(Tools::States state)
 
 unsigned short Reader::readNextSymbol()
 {
+    if(!in)
+    {
+        std::cerr<<"No in thread attached , 0 returns "<<std::endl;
+        return 0;
+    }
     unsigned short result=0;
     unsigned short mask = 0b0000000000000001;
     for(int i = 0 ; i < 8+ state; i++)

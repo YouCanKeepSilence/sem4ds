@@ -6,6 +6,7 @@ class Reader
 {
 public:
     Reader();
+    ~Reader();
     void attach(std::istream * in);
     void detach();
     std::istream * getStream();
