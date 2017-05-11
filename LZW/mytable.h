@@ -9,15 +9,15 @@ class MyTable
 public:
     MyTable(unsigned int maxSize = 256);
     bool contains(unsigned short id);
-    bool contains(std::string key);
-    void add(std::string data);
+    bool contains(int parent, unsigned char sym);
+    void add(unsigned char lastSymbol, int parent, std::string data);
     unsigned int getSize();
     unsigned int getMaxSize();
     unsigned short get(std::string data);
     unsigned short getCurrentParentIndex();
     void resetOldHash();
 private:
-    unsigned int getHash(std::string key);
+    unsigned int getHash(unsigned char symbol , int parent);
     void init();
     unsigned int indexOfLast;
     unsigned int maxSize;
@@ -31,9 +31,9 @@ private:
 
 struct NElement
 {
-    NElement(int parent, char symbol, unsigned int id);
+    NElement(int parent, unsigned char symbol, unsigned int id);
     int parentId;
-    char symbol;
+    unsigned char symbol;
     unsigned int id;
     NElement * next;
 };

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "table.h"
+
 #include "writer.h"
 #include "reader.h"
 #include <fstream>
@@ -26,71 +26,60 @@ void packing(std::string inName,std::string outName,unsigned short size)
         return;
     }
     Writer writer;
-    ofstream debug;
-    debug.open("debugWrite.txt");
+//    ofstream debug;
+//    debug.open("debugWrite.txt");
     uint8_t maxSize = size;
     out.write("LZW5",4);
     out.put(maxSize);
 
     writer.attach(&out);
     writer.setState(Tools::zero);
-//    Table strings(pow(2,size));
     MyTable strings(pow(2,size));
     string currentString="";
     unsigned int flag = 256;
     unsigned int mark = 0;
     unsigned short id;
     cout<<strings.getSize();
-//    cout<<strings.getRealSize();
+    int parent = -1;
     while(1)
     {
 
-        char c=in.get();
+        unsigned char c=in.get();
 
         if(in.eof())
         {
             if(!currentString.empty())
             {
-                int index=strings.get(currentString);
-                cout<<"Последняя строка "<<index<<endl;
-                debug<<index;
-                writer.writeCode(index);
+                cout<<"Последняя строка "<<parent<<endl;
+//                debug<<parent;
+                writer.writeCode(parent);
             }
             writer.flush();
             break;
         }
-        if(strings.contains(currentString+c))
+        if(strings.contains(parent,c))
         {
-
+            parent = strings.getCurrentParentIndex();
             currentString.push_back(c);
-//            cout<<"Есть строка "<<currentString<<" продолжаю "<<endl;
-//            continue;
         }
         else
         {
-//            string bufstr = currentString;
-//            id = strings.get(currentString);
-            id = strings.getCurrentParentIndex();
+            id = parent;
             currentString.push_back(c);
-            strings.add(currentString);
+            strings.add(c,parent,currentString);
+            parent = strings.getCurrentParentIndex();
 //            cout<<"Добавлена строка "<<currentString<<" ее код "<<strings.getIndex(currentString)<<" выписан код "<<strings.getIndex(bufstr)<<endl;
             currentString = c;
+
+//            debug<<id<<endl;
+            writer.writeCode(id);
             if((strings.getSize()-1)%flag==0 && strings.getSize() < strings.getMaxSize()) // для холодного старта
             {
                 mark++;
-                debug<<id<<endl;
-                writer.writeCode(id);
                 cout<<"Текущий размер : "<<strings.getSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
                 writer.setState((Tools::States)mark);
-                debug<<"State"<<mark;
+//                debug<<"State"<<mark;
                 flag *= 2;
-//                continue;
-            }
-            else
-            {
-                debug<<id<<endl;
-                writer.writeCode(id);
-//                continue;
             }
         }
         strings.resetOldHash();
@@ -126,8 +115,8 @@ void unpacking(std::string inName, std::string outName)
         return;
     }
     Reader reader;
-    ofstream debug;
-    debug.open("debugRead.txt");
+//    ofstream debug;
+//    debug.open("debugRead.txt");
     short size = in.get();
 //    cout<<size;
     vector<string> strings;
@@ -154,26 +143,23 @@ void unpacking(std::string inName, std::string outName)
     unsigned short code=0;
     code = reader.readNextSymbol();
     cout<<strings.size()<<endl;
-    out<<strings[code];
+    out.write(strings[code].c_str(),strings[code].size() );
     while(1)
     {
         old = code;
-        debug<<old<<endl;
+//        debug<<old<<endl;
         if(lastIndex%flag==0 && (lastIndex < maxSize))
         {
-            cout<<"размер "<< strings.size()<<" состояние изменено с "<<mark;
+            cout<<"размер "<< lastIndex<<" состояние изменено с "<<mark;
             mark++;
             reader.setState((Tools::States)mark);
             cout<<" на "<<mark<<endl;
-            debug<<"State"<<mark;
+//            debug<<"State"<<mark;
             flag *= 2;
         }
         code = reader.readNextSymbol();
         if(in.eof())
         {
-//            cout<<old<<endl;
-//            cout<<code<<endl;
-//            out<<strings.getString(code);
             break;
         }
 
@@ -181,7 +167,7 @@ void unpacking(std::string inName, std::string outName)
         {
             string toWrite = strings[code];
             out.write(toWrite.c_str(),toWrite.size());
-            cout<<"Yes, string : "<<toWrite<<endl;
+//            cout<<"Yes, string : "<<toWrite<<endl;
             if(lastIndex < maxSize)
             {
                 strings[lastIndex]=(strings[old] + strings[code][0]);
@@ -193,7 +179,7 @@ void unpacking(std::string inName, std::string outName)
             string bufstr= strings[old];
             string toWrite = bufstr + bufstr[0];
             out.write(toWrite.c_str(),toWrite.size());
-            cout<<"No, string : "<<toWrite<<endl;
+//            cout<<"No, string : "<<toWrite<<endl;
             if(lastIndex < maxSize)
             {
                 strings[lastIndex]=(toWrite);

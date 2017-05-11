@@ -21,9 +21,10 @@ MyTable::MyTable(unsigned int maxSize) :
     {
         std::string str;
         str.push_back((char)i);
-        strings[i] = str;
-        indexOfLast++;
-        hash[i]=new NElement(-1,char(i), i);
+        this->add(i,-1,str);
+//        strings[i] = str;
+//        indexOfLast++;
+//        hash[i]=new NElement(-1,char(i), i);
     }
 }
 
@@ -39,46 +40,55 @@ bool MyTable::contains(unsigned short id)
     }
 }
 
-bool MyTable::contains(std::string key)
+bool MyTable::contains(int parent, unsigned char sym)
 {
-    unsigned int hashNum = getHash(key);
+    unsigned int hashNum = getHash(sym,parent);
     NElement * item = hash.at(hashNum);
     if(!item)
     {
         return false;
     }
-    while(1)
+    while(item && !(item->parentId==parent && item->symbol==sym))
     {
-        if(item)
-        {
-            if(strings.at(item->id) == key)
-            {
-                parentIndex = item->id;
-                return true;
-            }
-        }
-        else
-        {
+//        if(item)
+//        {
+//            if(item->parentId == parent && item->symbol==sym)
+//            {
+//                parentIndex = item->id;
+//                return true;
+//            }
+//        }
+//        else
+//        {
 
-            return false;
-        }
-        forNew = item;
+//            return false;
+//        }
+//        forNew = item;
         item = item->next;
-
     }
+    if(item)
+    {
+        parentIndex = item->id;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+
 }
 
-void MyTable::add(std::string data)
+void MyTable::add(unsigned char lastSymbol , int parent , std::string data)
 {
-    unsigned char lastSym = data[data.length()-1];
+//    unsigned char lastSym = data[data.length()-1];
     if(indexOfLast >= maxSize)
     {
-        parentIndex=lastSym;
+        parentIndex=lastSymbol;
         return;
     }
     strings[indexOfLast] = data;
     //add to hash
-    unsigned int hashNum = getHash(data);
+    unsigned int hashNum = getHash(lastSymbol,parent);
     NElement * item = hash.at(hashNum);
     if(item)//forNew)
     {
@@ -88,7 +98,7 @@ void MyTable::add(std::string data)
         {
             if(!item->next)
             {
-                item->next = new NElement(parentIndex,lastSym,indexOfLast);
+                item->next = new NElement(parent,lastSymbol,indexOfLast);
                 break;
             }
             item=item->next;
@@ -97,9 +107,9 @@ void MyTable::add(std::string data)
     else
     {
 //        unsigned int hashNum = getHash(data);
-        hash[hashNum] = new NElement(parentIndex,lastSym,indexOfLast);
+        hash[hashNum] = new NElement(parent,lastSymbol,indexOfLast);
     }
-    parentIndex=lastSym;
+    parentIndex=lastSymbol;
     indexOfLast++;
 }
 
@@ -115,7 +125,7 @@ unsigned int MyTable::getMaxSize()
 
 unsigned short MyTable::get(std::string data)
 {
-    unsigned int hashNum = getHash(data);
+    unsigned int hashNum ;//= getHash(data);
     NElement * item = hash.at(hashNum);
     if(!item)
     {
@@ -152,27 +162,27 @@ void MyTable::resetOldHash()
     oldHash = -1;
 }
 
-unsigned int MyTable::getHash(std::string key)
+unsigned int MyTable::getHash(unsigned char symbol, int parent)
 {
     if(oldHash != -1)
     {
         return (unsigned int)oldHash % this->hash.capacity();
     }
-    if(key.length() == 1)
-    {
-        std::cout<<"HASH SINGLE "<<(unsigned short)(unsigned char)key[0]<<std::endl;
-        return (unsigned char)key[0];
-    }
-    unsigned char sym = key[key.length()-1] + 1 ;
-    unsigned int hash = 2139062143;
-    hash *= sym ^ parentIndex;//37  * key.length() * sym * parentIndex ;
+//    if(key.length() == 1)
+//    {
+//        std::cout<<"HASH SINGLE "<<(unsigned short)(unsigned char)key[0]<<std::endl;
+//        return (unsigned char)key[0];
+//    }
+//    unsigned char sym = symbol[symbol.length()-1] + 1 ;
+    unsigned int hash;// = 2139062143;
+    hash = symbol ^ parent;//37  * key.length() * sym * parentIndex ;
     hash = hash % this->hash.capacity();
-    std::cout<<"HASH LONG "<<hash<<std::endl;
+//    std::cout<<"HASH LONG "<<hash<<std::endl;
     return hash;
 
 }
 
-NElement::NElement(int parent, char symbol, unsigned int id)
+NElement::NElement(int parent,unsigned char symbol, unsigned int id)
 {
     this->parentId = parent;
     this->symbol = symbol;
