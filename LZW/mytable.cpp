@@ -6,7 +6,9 @@ typedef std::vector<NElement*>::iterator elemIterator;
 MyTable::MyTable(unsigned int maxSize) :
     indexOfLast(0),
     maxSize(maxSize),
+    oldHash(-1),
     forNew(NULL)
+
 
 {
     strings.resize(maxSize);
@@ -77,23 +79,24 @@ void MyTable::add(std::string data)
     strings[indexOfLast] = data;
     //add to hash
     unsigned int hashNum = getHash(data);
-//    NElement * item = hash.at(hashNum);
-    if(forNew)
+    NElement * item = hash.at(hashNum);
+    if(item)//forNew)
     {
-        forNew = new NElement(parentIndex,lastSym,indexOfLast);
-        forNew = NULL;
-//        while(1)
-//        {
-//            if(!item->next)
-//            {
-//                item->next = new NElement(parentIndex,lastSym,indexOfLast);
-//                break;
-//            }
-//            item=item->next;
-//        }
+//        forNew->next = new NElement(parentIndex,lastSym,indexOfLast);
+//        forNew = NULL;
+        while(1)
+        {
+            if(!item->next)
+            {
+                item->next = new NElement(parentIndex,lastSym,indexOfLast);
+                break;
+            }
+            item=item->next;
+        }
     }
     else
     {
+//        unsigned int hashNum = getHash(data);
         hash[hashNum] = new NElement(parentIndex,lastSym,indexOfLast);
     }
     parentIndex=lastSym;

@@ -29,12 +29,10 @@ std::__1::ostream *Writer::getStream()
 void Writer::writeCode(unsigned short code)
 {
 
-//    std::cout<<8+state<<std::endl;
+
     std::cout<<"Пишу "<<code<<std::endl;
     for(int i=0; i < 8 + state; i++)
     {
-//        std::cout<<"Пишу "<<code<<std::endl;//(int) i/8 <<" байт числа "<<code<<" ";
-//        std::cout<<(bool)(code & (0b0000000000000001 << i));
         writeNextBit(code & (0b0000000000000001 << i));
     }
 
@@ -44,7 +42,10 @@ void Writer::flush()
 {
     if(currentByte)
     {
-        out->put(currentByte);
+
+        unsigned short twoBytes = currentByte;
+        std::cout<<"flushing "<<twoBytes<<std::endl;
+        out->write((char*)&twoBytes,2);
     }
 }
 

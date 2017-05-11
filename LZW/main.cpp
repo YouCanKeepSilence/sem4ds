@@ -49,14 +49,13 @@ void packing(std::string inName,std::string outName,unsigned short size)
 
         if(in.eof())
         {
-//            if(!currentString.empty())
-//            {
-//                int index=strings.get(currentString);
-//                cout<<"Последняя строка "<<index<<endl;
-//                debug<<strings.getIndex(currentString);
-//                writer.writeCode(index);
-
-//            }
+            if(!currentString.empty())
+            {
+                int index=strings.get(currentString);
+                cout<<"Последняя строка "<<index<<endl;
+                debug<<index;
+                writer.writeCode(index);
+            }
             writer.flush();
             break;
         }
@@ -132,13 +131,20 @@ void unpacking(std::string inName, std::string outName)
     short size = in.get();
 //    cout<<size;
     vector<string> strings;
+    unsigned int lastIndex=0;
     for(int i=0; i< 256; i++)
     {
         string str;
         str.push_back((char)i);
         strings.push_back(str);
+        lastIndex++;
     }
+
     unsigned int maxSize = pow(2,size);
+    for(unsigned int i = 256 ; i < maxSize; i++)
+    {
+        strings.push_back("");
+    }
 //    strings.resize(pow(2,size));
     reader.attach(&in);
     reader.setState(Tools::zero);
@@ -153,7 +159,7 @@ void unpacking(std::string inName, std::string outName)
     {
         old = code;
         debug<<old<<endl;
-        if(strings.size()%flag==0 && (strings.size() < maxSize))
+        if(lastIndex%flag==0 && (lastIndex < maxSize))
         {
             cout<<"размер "<< strings.size()<<" состояние изменено с "<<mark;
             mark++;
@@ -171,19 +177,28 @@ void unpacking(std::string inName, std::string outName)
             break;
         }
 
-        if((code > strings.size()) | (!strings.at(code).empty() ))
+        if((!strings.at(code).empty() ))
         {
-            out<<strings[code];
-            cout<<"Yes, string : "<<strings[code]<<endl;
-            strings.push_back(strings[old] + strings[code][0]);
+            string toWrite = strings[code];
+            out.write(toWrite.c_str(),toWrite.size());
+            cout<<"Yes, string : "<<toWrite<<endl;
+            if(lastIndex < maxSize)
+            {
+                strings[lastIndex]=(strings[old] + strings[code][0]);
+                lastIndex++;
+            }
         }
         else
         {
             string bufstr= strings[old];
             string toWrite = bufstr + bufstr[0];
-            out.write(toWrite.c_str(),toWrite.length());
+            out.write(toWrite.c_str(),toWrite.size());
             cout<<"No, string : "<<toWrite<<endl;
-            strings.push_back(toWrite);
+            if(lastIndex < maxSize)
+            {
+                strings[lastIndex]=(toWrite);
+                lastIndex++;
+            }
         }
 
     }
