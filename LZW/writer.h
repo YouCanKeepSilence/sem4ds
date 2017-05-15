@@ -6,6 +6,7 @@ class Writer
 {
 public:
     Writer();
+    ~Writer();
     void attach(std::ostream * out);
     void detach();
     std::ostream * getStream();

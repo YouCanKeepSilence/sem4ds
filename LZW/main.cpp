@@ -1,5 +1,5 @@
 #include <iostream>
-#include "table.h"
+
 #include "writer.h"
 #include "reader.h"
 #include <fstream>
@@ -7,6 +7,7 @@
 #include <cmath>
 #include <ctime>
 #include <cstring>
+#include "mytable.h"
 using namespace std;
 
 void packing(std::string inName,std::string outName,unsigned short size)
@@ -27,70 +28,65 @@ void packing(std::string inName,std::string outName,unsigned short size)
         return;
     }
     Writer writer;
-    ofstream debug;
-    debug.open("debugWrite.txt");
+//    ofstream debug;
+//    debug.open("debugWrite.txt");
     uint8_t maxSize = size;
     out.write("LZW5",4);
     out.put(maxSize);
 
     writer.attach(&out);
     writer.setState(Tools::zero);
-    Table strings(pow(2,size));
+    MyTable strings(pow(2,size));
     string currentString="";
     unsigned int flag = 256;
     unsigned int mark = 0;
-    cout<<strings.getRealSize();
+    unsigned short id;
+    cout<<strings.getSize();
+    int parent = -1;
     while(1)
     {
 
-        char c=in.get();
-        unsigned short oldId;
-        unsigned short newId;
+        unsigned char c=in.get();
+
         if(in.eof())
         {
             if(!currentString.empty())
             {
-                cout<<"Последняя строка "<<strings.getIndex(currentString)<<endl;
-                debug<<strings.getIndex(currentString);
-                writer.writeCode(strings.getIndex(currentString));
-                writer.flush();
+                cout<<"Последняя строка "<<parent<<endl;
+//                debug<<parent;
+                writer.writeCode(parent);
             }
+            writer.flush();
             break;
         }
-        if(strings.contains(currentString+c))
+        if(strings.contains(parent,c))
         {
-
+            parent = strings.getCurrentParentIndex();
             currentString.push_back(c);
-//            cout<<"Есть строка "<<currentString<<" продолжаю "<<endl;
-            continue;
         }
         else
         {
-            string bufstr = currentString;
+            id = parent;
             currentString.push_back(c);
-            strings.add(currentString);
+            strings.add(c,parent,currentString);
+            parent = strings.getCurrentParentIndex();
 //            cout<<"Добавлена строка "<<currentString<<" ее код "<<strings.getIndex(currentString)<<" выписан код "<<strings.getIndex(bufstr)<<endl;
             currentString = c;
-            if((strings.getRealSize()-1)%flag==0 && strings.getRealSize() < strings.getMaxSize()) // для холодного старта
+
+//            debug<<id<<endl;
+            writer.writeCode(id);
+            if((strings.getSize()-1)%flag==0 && strings.getSize() < strings.getMaxSize()) // для холодного старта
             {
                 mark++;
-                debug<<strings.getIndex(bufstr)<<endl;
-                writer.writeCode(strings.getIndex(bufstr));
-                cout<<"Текущий размер : "<<strings.getRealSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
+                cout<<"Текущий размер : "<<strings.getSize()<<" Состояние изменено с "<<(mark-1)<<" на "<<mark<<endl;
                 writer.setState((Tools::States)mark);
-                debug<<"State"<<mark;
+//                debug<<"State"<<mark;
                 flag *= 2;
-                continue;
-            }
-            else
-            {
-                debug<<strings.getIndex(bufstr)<<endl;
-                writer.writeCode(strings.getIndex(bufstr));
-                continue;
             }
         }
+        strings.resetOldHash();
     }
-    cout<<"realSize "<<strings.getRealSize()<<endl;
+    cout<<"realSize "<<strings.getSize()<<endl;
     in.close();
     out.close();
     return;
@@ -121,11 +117,26 @@ void unpacking(std::string inName, std::string outName)
         return;
     }
     Reader reader;
-    ofstream debug;
-    debug.open("debugRead.txt");
+//    ofstream debug;
+//    debug.open("debugRead.txt");
     short size = in.get();
-    cout<<size;
-    Table strings(pow(2,size));
+//    cout<<size;
+    vector<string> strings;
+    unsigned int lastIndex=0;
+    for(int i=0; i< 256; i++)
+    {
+        string str;
+        str.push_back((char)i);
+        strings.push_back(str);
+        lastIndex++;
+    }
+
+    unsigned int maxSize = pow(2,size);
+    for(unsigned int i = 256 ; i < maxSize; i++)
+    {
+        strings.push_back("");
+    }
+//    strings.resize(pow(2,size));
     reader.attach(&in);
     reader.setState(Tools::zero);
     int flag = 256;
@@ -134,50 +145,49 @@ void unpacking(std::string inName, std::string outName)
     int code=0;
     int state = 1;
     code = reader.readNextSymbol();
-    if(!state)
-    {
-        std::cout<<"Empty archive"<<std::endl;
-        return;
-    }
-    cout<<strings.getRealSize();
-    out<<strings.getString(code);
+    cout<<strings.size()<<endl;
+    out.write(strings[code].c_str(),strings[code].size() );
     while(1)
     {
         old = code;
-        debug<<old<<endl;
-        if((strings.getRealSize())%flag==0 && (strings.getRealSize() < strings.getMaxSize()))
+//        debug<<old<<endl;
+        if(lastIndex%flag==0 && (lastIndex < maxSize))
         {
-            cout<<"размер "<< strings.getRealSize()<<" состояние изменено с "<<mark;
+            cout<<"размер "<< lastIndex<<" состояние изменено с "<<mark;
             mark++;
             reader.setState((Tools::States)mark);
             cout<<" на "<<mark<<endl;
-            debug<<"State"<<mark;
+//            debug<<"State"<<mark;
             flag *= 2;
         }
         code = reader.readNextSymbol();
         if(in.eof() && code == -1)//(state==false))
         {
-
-//            std::cout <<"Its EOF"<< EOF;
-//            cout<<old<<endl;
-//            cout<<code<<endl;
-//            out<<strings.getString(code);
-
             break;
         }
 
-        if(strings.contains(code))
+        if((!strings.at(code).empty() ))
         {
-            out<<strings.getString(code);
-            cout<<"Yes, string : "<<strings.getString(code)<<endl;
-            strings.add(strings.getString(old) + strings.getString(code)[0]);
+            string toWrite = strings[code];
+            out.write(toWrite.c_str(),toWrite.size());
+//            cout<<"Yes, string : "<<toWrite<<endl;
+            if(lastIndex < maxSize)
+            {
+                strings[lastIndex]=(strings[old] + strings[code][0]);
+                lastIndex++;
+            }
         }
         else
         {
-            string bufstr= strings.getString(old);
-            out<<(bufstr + bufstr[0]);
-            cout<<"No, string : "<<(bufstr + bufstr[0])<<endl;
-            strings.add(bufstr + bufstr[0]);
+            string bufstr= strings[old];
+            string toWrite = bufstr + bufstr[0];
+            out.write(toWrite.c_str(),toWrite.size());
+//            cout<<"No, string : "<<toWrite<<endl;
+            if(lastIndex < maxSize)
+            {
+                strings[lastIndex]=(toWrite);
+                lastIndex++;
+            }
         }
 
     }
@@ -189,7 +199,7 @@ void unpacking(std::string inName, std::string outName)
 int main(int argc, char *argv[])
 {
     system("clear");
-//    clock_t start = clock();
+    clock_t start = clock();
     if(argc==4)
     {
         //TODO упаковка
@@ -202,7 +212,6 @@ int main(int argc, char *argv[])
         unpacking(argv[1],argv[2]);
         cout<<"Unpack"<<endl;
     }
-    clock_t end = clock();
-    cout<<(((float)end) / CLOCKS_PER_SEC)<<" секунд"<<endl;
-    cout<<"goodbye"<<endl;
+    cout<<"goodbye "<<endl;
+    cout<<"time : "<<(clock() - start) / CLOCKS_PER_SEC<<" s "<<endl;
 }

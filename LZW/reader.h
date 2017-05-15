@@ -6,6 +6,7 @@ class Reader
 {
 public:
     Reader();
+    ~Reader();
     void attach(std::istream * in);
     void detach();
     std::istream * getStream();
@@ -16,7 +17,6 @@ private:
     bool readNextBit();
     char currentByte;
     int currentBit;
-
     std::istream *in;
 };
 

@@ -7,6 +7,11 @@ Writer::Writer()
     out=NULL;
 }
 
+Writer::~Writer()
+{
+    this->detach();
+}
+
 void Writer::attach(std::ostream *out)
 {
     this->out = out;
@@ -28,13 +33,14 @@ std::ostream *Writer::getStream()
 
 void Writer::writeCode(unsigned short code)
 {
-
-//    std::cout<<8+state<<std::endl;
-    std::cout<<"Пишу "<<code<<std::endl;
+    if(!out)
+    {
+        std::cerr<<"No out thread attached "<<std::endl;
+        return;
+    }
+//    std::cout<<"Пишу "<<code<<std::endl;
     for(int i=0; i < 8 + state; i++)
     {
-//        std::cout<<"Пишу "<<code<<std::endl;//(int) i/8 <<" байт числа "<<code<<" ";
-//        std::cout<<(bool)(code & (0b0000000000000001 << i));
         writeNextBit(code & (0b0000000000000001 << i));
     }
 
@@ -42,8 +48,14 @@ void Writer::writeCode(unsigned short code)
 
 void Writer::flush()
 {
-    if(currentByte)
+    if(!out)
     {
+        std::cerr<<"No out thread attached "<<std::endl;
+        return;
+    }
+    if(currentBit!=0)
+    {
+//        std::cout<<"flushing "<<currentByte<<std::endl;
         out->put(currentByte);
     }
 }
@@ -65,14 +77,13 @@ void Writer::writeNextBit(bool bit)
     if(currentBit > 7 )
     {
         currentBit=0;
-        out->put(currentByte);
-        for(int i=0; i<8 ;i++)
-        {
-            if(currentByte & (0b10000000 >> i))
-                std::cout<<1;
-            else
-                std::cout<<0;
-        }
+//        for(int i=0; i<8 ;i++)
+//        {
+//            if(currentByte & (0b10000000 >> i))
+//                std::cout<<1;
+//            else
+//                std::cout<<0;
+//        }
 //        std::cout<<std::endl;
 
         currentByte = 0;
