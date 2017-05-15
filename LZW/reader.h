@@ -17,7 +17,6 @@ private:
     bool readNextBit();
     char currentByte;
     int currentBit;
-
     std::istream *in;
 };
 
