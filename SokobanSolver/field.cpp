@@ -99,11 +99,11 @@ void Field::readFieldFromFlie(std::istream &in)
     {
         throw "Error with input stream!";
     }
-//    sField = new StaticField();
-//    globalField = new StaticField();
-    int counter = 0;
+    std::vector<char> bufBoxes;
+    unsigned char coordinate = 0;
+    int currentWidth = 0;
     int width = 0;
-    bool newString = true;
+//    bool newString = true;
     while(1)
     {
         unsigned char c = in.get();
@@ -111,6 +111,7 @@ void Field::readFieldFromFlie(std::istream &in)
         {
             break;
         }
+
         switch(c)
         {
         case '#':
@@ -126,58 +127,52 @@ void Field::readFieldFromFlie(std::istream &in)
         case 'X':
             //Ящик на месте для ящика
             sField->addWallOrPlace(0,1);
-            //Добавляется ящик на основе bufWalls.size()
+            bufBoxes.push_back(coordinate);
             std::cout<<"X";
             break;
         case 'B':
-            sField->addWallOrPlace(0,0);
             //Ящик
+            sField->addWallOrPlace(0,0);
+            bufBoxes.push_back(coordinate);
             std::cout<<"B";
-            //ящик
             break;
         case ' ':
-            if(newString)
-            {
-                sField->addWallOrPlace(1,0);
-                break;
-            }
             std::cout<<" ";
             sField->addWallOrPlace(0,0);
             break;
         case '\n':
             std::cout<<"\n";
-//            if(flag)
-//            {
-//                flag = false;
-//                width = counter;
-//            }
-            counter--;
-
+            if(currentWidth > width)
+            {
+                width = currentWidth;
+            }
+            currentWidth = -1;
+            coordinate--;
             break;
         case 'P':
             //игрок
             sField->addWallOrPlace(0,0);
+            playerPos = coordinate;
             std::cout<<"P";
             break;
         default:
             std::cout<<"default";
             break;
         }
-        counter++;
-    }
-    std::cout<<std::endl<<counter<<std::endl<<width<<std::endl;
-//    for(long i = 0; i < bufWalls.size() ; i++)
-//    {
-//        if(bufWalls[i])
-//            std::cout<<1;
-//        else
-//            std::cout<<0;
-//        if((i+1) % width == 0 )
-//        {
-//            std::cout<<std::endl;
-//        }
-//    }
+        coordinate++;
+        currentWidth++;
 
+    }
+    std::cout<<std::endl<<(int)coordinate<<std::endl<<(int)width<<std::endl;
+    sField->setBoxesCount(bufBoxes.size());
+    boxes = new unsigned char [sField->getBoxesCount()];
+    for(int i = 0; i < sField->getBoxesCount(); i++)
+    {
+        boxes[i] = bufBoxes.at(i);
+        std::cout<<"Box #"<<i<<" "<<(int)boxes[i]<<" ";
+    }
+    std::cout <<"Player position "<< (int)playerPos<<std::endl;
+    bufBoxes.clear();
 }
 
 bool Field::move(Directions direction)
