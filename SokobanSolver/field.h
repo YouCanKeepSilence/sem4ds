@@ -44,6 +44,9 @@ public:
     void readFieldFromFlie(std::istream &in);
     bool move(Directions direction);
     void setStaticField(StaticField * sField);
+    unsigned char getWidth();
+    unsigned char getHeight();
+    unsigned char getBoxesCount();
 private:
     static StaticField * sField;
     unsigned char playerPos;

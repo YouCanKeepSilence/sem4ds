@@ -103,6 +103,7 @@ void Field::readFieldFromFlie(std::istream &in)
     unsigned char coordinate = 0;
     int currentWidth = 0;
     int width = 0;
+    int height = 1;
 //    bool newString = true;
     while(1)
     {
@@ -146,6 +147,7 @@ void Field::readFieldFromFlie(std::istream &in)
             {
                 width = currentWidth;
             }
+            height++;
             currentWidth = -1;
             coordinate--;
             break;
@@ -165,6 +167,8 @@ void Field::readFieldFromFlie(std::istream &in)
     }
     std::cout<<std::endl<<(int)coordinate<<std::endl<<(int)width<<std::endl;
     sField->setBoxesCount(bufBoxes.size());
+    sField->setWidth(width);
+    sField->setHeight(height);
     boxes = new unsigned char [sField->getBoxesCount()];
     for(int i = 0; i < sField->getBoxesCount(); i++)
     {
@@ -198,5 +202,20 @@ bool Field::move(Directions direction)
     }
     return false;
 
+}
+
+unsigned char Field::getWidth()
+{
+    return sField->getWidth();
+}
+
+unsigned char Field::getHeight()
+{
+    return sField->getHeight();
+}
+
+unsigned char Field::getBoxesCount()
+{
+    return sField->getBoxesCount();
 }
 
