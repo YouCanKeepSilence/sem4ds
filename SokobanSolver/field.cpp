@@ -13,8 +13,6 @@ StaticField::~StaticField()
     walls.clear();
 }
 
-
-
 StaticField * Field::sField = new StaticField();
 
 void StaticField::addWallOrPlace(bool wall, bool place)
@@ -169,139 +167,56 @@ bool Field::move(Directions direction)
 {
     unsigned char width = sField->getWidth();
     unsigned char newPosition = 0;
+    unsigned char move = 0;     //На что будем сдвигать
     switch(direction)
     {
     case Up:
-        newPosition = playerPos - width;
-        if(sField->canMove(newPosition))
-        {
-            char index = checkBox(newPosition);
-            if(index != -1)
-            {
-                if(sField->canMove(newPosition - width))
-                {
-                    if(checkBox(newPosition - width)!= -1)
-                    {
-//                        std::cout<<"no"<<std::endl;
-                        return false;
-                    }
-                    else
-                    {
-                        boxes[(int)index] -= width;
-                        this->sortBoxes();
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
+        move = - width;
         break;
     case Right:
-        newPosition = playerPos + 1;
-        if(sField->canMove(newPosition))
-        {
-            char index = checkBox(newPosition);
-            if(index != -1)
-            {
-                if(sField->canMove(newPosition + 1))
-                {
-                    if(checkBox(newPosition + 1)!=-1)
-                    {
-//                        std::cout<<"no"<<std::endl;
-                        return false;
-                    }
-                    else
-                    {
-                        boxes[(int)index]++;
-                        this->sortBoxes();
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
+        move = 1;
         break;
     case Down:
-        newPosition = playerPos + width;
-        if(sField->canMove(newPosition))
-        {
-            char index = checkBox(newPosition);
-            if(index != -1)
-            {
-                if(sField->canMove(newPosition + width))
-                {
-                    if(checkBox(newPosition + width)!=-1)
-                    {
-//                        std::cout<<"no"<<std::endl;
-                        return false;
-                    }
-                    else
-                    {
-                        boxes[(int)index] += width;
-                        this->sortBoxes();
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
+        move = width;
         break;
     case Left:
-        newPosition = playerPos -1;
-        if(sField->canMove(newPosition))
-        {
-            char index = checkBox(newPosition);
-            if(index != -1)
-            {
-                if(sField->canMove(newPosition - 1))
-                {
-                    if(checkBox(newPosition - 1)!=-1)
-                    {
-//                        std::cout<<"no"<<std::endl;
-                        return false;
-                    }
-                    else
-                    {
-                        boxes[(int)index]--;
-                        this->sortBoxes();
-                    }
-                }
-                else
-                {
-                    return false;
-                }
-            }
-        }
-        else
-        {
-            return false;
-        }
+        move = -1;
         break;
     default:
         std::cerr<<"ERROR!! Unknow direction"<<std::endl;
         return false;
         break;
     }
-    playerPos = newPosition;
-    return true;
+    newPosition = playerPos + move;
+    if(sField->canMove(newPosition))                    // Можем ли мы пойти в этом направлении
+    {
+        char index = checkBox(newPosition);
+        if(index != -1)                                 // Если в том направлении коробка
+        {
+            if(sField->canMove(newPosition + move))     // Можем ли мы ее подвинуть
+            {
+                if(checkBox(newPosition + move)!= -1)   // Если два ящика подряд
+                {
+                    return false;                       // То нельзя подвинуть
+                }
+                else
+                {
+                    boxes[(int)index] += move;          // Иначе двигаем
+                    this->sortBoxes();                  // Сортируем (для проверки на победу)
+                }
+            }
+            else
+            {
+                return false;                           // Если нельзя двинуть ящик то двигаться нельзя
+            }
+        }
+    }
+    else
+    {
+        return false;                                   // Если уперлись в стену то нельзя
+    }
+    playerPos = newPosition;                            // Двигаемся
+    return true;                                        // Успешно
 
 }
 
@@ -366,6 +281,10 @@ void Field::printField()
         {
             std::cout<<"#";
         }
+        else if(playerPos == i)
+        {
+            std::cout<<"P";
+        }
         else if(sField->placeAt(i))
         {
             if(checkBox(i)!=-1)
@@ -381,10 +300,7 @@ void Field::printField()
         {
             std::cout<<"B";
         }
-        else if(playerPos == i)
-        {
-            std::cout<<"P";
-        }
+
         else
         {
             std::cout<<" ";
