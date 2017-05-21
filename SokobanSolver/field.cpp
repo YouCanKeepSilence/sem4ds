@@ -1,4 +1,5 @@
 #include "field.h"
+#include <cmath>
 StaticField::StaticField():
     width(0),
     height(0)
@@ -52,21 +53,42 @@ unsigned char StaticField::getBoxesCount()
     return boxesCount;
 }
 
+unsigned char *StaticField::getPlacesIndexes()
+{
+    std::vector<unsigned char> buf;
+    for(unsigned char i=0 ; i < places.size(); i++)
+    {
+        if(places.at(i)==1)
+        {
+            buf.push_back(i);
+        }
+    }
+    unsigned char * indexes;
+    indexes = new unsigned char [buf.size()];
+    for(unsigned long i = 0; i<buf.size(); i++)
+    {
+        indexes[i] = buf[i];
+    }
+    buf.clear();
+    return indexes;
+}
+
 bool StaticField::canMove(unsigned char position)
 {
-
     return (!walls.at(position));
 }
 
-Field::Field()
+Field::Field() : playerPos(0),
+    boxes(NULL)
+
 {
-    boxes = NULL;
+
 }
 
-Field::~Field()
-{
-    delete [] boxes;
-}
+//Field::~Field()
+//{
+//    delete [] boxes;
+//}
 
 Field::Field(Field &f)
 {
@@ -181,15 +203,70 @@ void Field::readFieldFromFlie(std::istream &in)
 
 bool Field::move(Directions direction)
 {
+    unsigned char width = sField->getWidth();
+    unsigned char height = sField->getHeight();
     switch(direction)
     {
     case Up:
-        if((playerPos >= sField->getWidth()) & (sField->canMove(playerPos - sField->getWidth())))
+        if((playerPos >= width) && (sField->canMove(playerPos - width)))
         {
-
+            for(int i=0 ; i < sField->getBoxesCount() ; i++)
+            {
+                if(boxes[i] == playerPos - width)
+                {
+                    if((playerPos - width >= width) && sField->canMove(playerPos - 2*width))
+                    {
+                        playerPos = boxes[i];
+                        boxes[i] -= width;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            playerPos -= width;
+            return true;
+        }
+        else
+        {
+            return false;
         }
         break;
     case Right:
+        if(sField->canMove(playerPos + 1))
+        {
+            for(int i = 0; i < sField->getBoxesCount() ; i++)
+            {
+                if(boxes[i] == playerPos + 1)
+                {
+                    if(sField->canMove(playerPos + 2))
+                    {
+                        for(int j = i; j < sField->getBoxesCount() ; j++)
+                        {
+                            if(boxes[j] == playerPos + 2)
+                            {
+                                return false;
+                            }
+                        }
+                        playerPos = boxes[i];
+                        boxes[i]++;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+            }
+            playerPos++;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
         break;
     case Down:
         break;
@@ -202,6 +279,20 @@ bool Field::move(Directions direction)
     }
     return false;
 
+}
+
+bool Field::checkForWin()
+{
+    unsigned char * win;
+    win = sField->getPlacesIndexes();
+    if(memcmp(win , boxes, sField->getBoxesCount())==0)
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 unsigned char Field::getWidth()
@@ -217,5 +308,32 @@ unsigned char Field::getHeight()
 unsigned char Field::getBoxesCount()
 {
     return sField->getBoxesCount();
+}
+
+unsigned char Field::getPlayerPos()
+{
+    return playerPos;
+}
+
+unsigned char *Field::getBoxes()
+{
+    return boxes;
+}
+
+unsigned long Field::getMemory()
+{
+//    std::vector<char> degrees;
+//    for(int i = sField->getBoxesCount() - 1; i  >= 0; i--)
+//    {
+//        degrees.push_back();
+//    }
+    unsigned long index = playerPos;
+    unsigned char coordinate = sField->getHeight() * sField->getWidth();
+    unsigned char count = sField->getBoxesCount();
+    for(int i = 0; i < count; i++)
+    {
+        index += boxes[i] * pow(coordinate , i+1);
+    }
+    return index;
 }
 

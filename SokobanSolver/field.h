@@ -25,6 +25,7 @@ public:
     unsigned char getWidth();
     unsigned char getHeight();
     unsigned char getBoxesCount();
+    unsigned char * getPlacesIndexes();
     bool canMove(unsigned char position);
 private:
     unsigned char boxesCount;
@@ -38,15 +39,19 @@ class Field
 {
 public:
     Field();
-    ~Field();
+//    ~Field();
     Field(Field &f);
-    Field& operator =(const Field &f);
+    Field& operator= (const Field &f);
     void readFieldFromFlie(std::istream &in);
     bool move(Directions direction);
+    bool checkForWin();
     void setStaticField(StaticField * sField);
     unsigned char getWidth();
     unsigned char getHeight();
     unsigned char getBoxesCount();
+    unsigned char getPlayerPos();
+    unsigned char *getBoxes();
+    unsigned long getMemory();
 private:
     static StaticField * sField;
     unsigned char playerPos;

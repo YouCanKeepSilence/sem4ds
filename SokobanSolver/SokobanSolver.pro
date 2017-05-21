@@ -4,7 +4,9 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    field.cpp
+    field.cpp \
+    node.cpp
 
 HEADERS += \
-    field.h
+    field.h \
+    node.h
