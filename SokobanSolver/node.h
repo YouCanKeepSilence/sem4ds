@@ -6,12 +6,12 @@ class Node
 {
 public:
     Node();
-    Node(const Field &fi, const Node * parent);
+    Node(const Field &fi, Node *parent);
     Field getField();
-    const Node * getParent() const;
+    Node *getParent();
 private:
     Field field;
-    const Node * parent;
+    Node * parent;
 };
 
 #endif // NODE_H

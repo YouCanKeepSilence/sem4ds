@@ -6,7 +6,7 @@ Node::Node() : field(),
 
 }
 
-Node::Node(const Field &fi, const Node *parent)
+Node::Node(const Field &fi, Node *parent)
 {
     this->field = fi;
     this->parent = parent;
@@ -15,4 +15,9 @@ Node::Node(const Field &fi, const Node *parent)
 Field Node::getField()
 {
     return this->field;
+}
+
+Node *Node::getParent()
+{
+    return this->parent;
 }

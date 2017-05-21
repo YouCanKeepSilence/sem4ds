@@ -5,8 +5,25 @@
 #include <ctime>
 #include <cmath>
 #include <list>
+#include <unistd.h>
 using namespace std;
 
+void wayToWin(Node* node)
+{
+    list<Field> way;
+    while(node->getParent()!=NULL)
+    {
+        way.push_front(node->getField());
+        node = node->getParent();
+    }
+    for(list<Field>::iterator it = way.begin(); it != way.end(); it++)
+    {
+        system("clear");
+        (*it).printField();
+        sleep(1);
+    }
+
+}
 
 
 int main(int argc, char *argv[])
@@ -30,18 +47,21 @@ int main(int argc, char *argv[])
         exit(1);
     }
     std::vector<bool> memory;
-    std::list<Node*> states;
+    std::list<Node> states;
     bool win = false;
     unsigned char coordinates = fi.getHeight() * fi.getWidth();
     unsigned long maxSize =  pow(coordinates , (fi.getBoxesCount()+1));
 
     memory.resize(maxSize);
+    cout<<"Начальное поле"<<endl;
+    fi.printField();
     cout<<"Высота "<<(int)fi.getHeight()<<endl;
     cout<<"Ширина "<<(int)fi.getWidth()<<endl;
     cout<<"Кол-во коробок "<<(int)fi.getBoxesCount()<<endl;
     cout<<"maxSize "<<maxSize<<" vec size "<<memory.size()<<endl;
-    states.push_back(new Node(fi,NULL));
-    list<Node*>::iterator currentNode = states.begin();
+    sleep(5);
+    states.push_back(Node(fi,NULL));
+    list<Node>::iterator currentNode = states.begin();
     while(!win)
     {
         if(states.size() >= maxSize)
@@ -52,43 +72,29 @@ int main(int argc, char *argv[])
         for(int DIR = Directions::_Start; DIR != Directions::_End; DIR++)
         {
             Field f;
-            f = (*currentNode)->getField();
+            f = (*currentNode).getField();
             if(f.move((Directions)DIR))
             {
-                cout<<"move"<<endl;
+                cout<<"move "<<endl;
                 cout<<"index "<<f.getMemory()<<endl;
                 if(memory.at(f.getMemory())==false)
                 {
                     cout<<"check"<<endl;
                     memory[f.getMemory()] = true;
-                    states.push_back(new Node(f,(*currentNode)));
-                    //check for win
+                    states.push_back(Node(f,&(*currentNode)));
                     if(f.checkForWin())
                     {
                         win = true;
                         cout<<"ETO POBEDA!"<<endl;
+
+                        wayToWin(&states.back());
                         break;
                     }
-
                 }
             }
         }
         currentNode++;
-//        break;
-
     }
-    cout<<fi.move(Directions::Right)<<endl;
-    cout<<"player "<<(int)fi.getPlayerPos()<<endl;
-    unsigned char * mass;
-    mass = fi.getBoxes();
-    for(int i = 0; i< fi.getBoxesCount(); i++)
-    {
-        cout<<"Box #"<<i<<" "<<(int)mass[i]<<" ";
-    }
-    cout<<sizeof(Field)<<endl;
-    cout<<sizeof(StaticField*)<<endl;
-    int a;
-    cin>>a;
     in.close();
     return 0;
 }

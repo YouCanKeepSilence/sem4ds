@@ -2,6 +2,7 @@
 #define FIELD_H
 #include <vector>
 #include <iostream>
+#define MAX_BOXES 5
 
 enum Directions
 {
@@ -19,6 +20,8 @@ public:
     StaticField();
     ~StaticField();
     void addWallOrPlace(bool wall, bool place);
+    bool wallAt(unsigned char coordinate);
+    bool placeAt(unsigned char coordinate);
     void setWidth(unsigned char width);
     void setHeight(unsigned char height);
     void setBoxesCount(unsigned char boxesCount);
@@ -39,9 +42,6 @@ class Field
 {
 public:
     Field();
-//    ~Field();
-    Field(Field &f);
-    Field& operator= (const Field &f);
     void readFieldFromFlie(std::istream &in);
     bool move(Directions direction);
     bool checkForWin();
@@ -52,10 +52,14 @@ public:
     unsigned char getPlayerPos();
     unsigned char *getBoxes();
     unsigned long getMemory();
+    void printField();
+
 private:
     static StaticField * sField;
+    void sortBoxes();
+    char checkBox(unsigned char position); // -1 если нет коробки иначе индекс в boxes
     unsigned char playerPos;
-    unsigned char * boxes;
+    unsigned char boxes[MAX_BOXES];
 
 };
 

@@ -23,6 +23,16 @@ void StaticField::addWallOrPlace(bool wall, bool place)
     places.push_back(place);
 }
 
+bool StaticField::wallAt(unsigned char coordinate)
+{
+    return walls.at((int)coordinate);
+}
+
+bool StaticField::placeAt(unsigned char coordinate)
+{
+    return places.at((int)coordinate);
+}
+
 void StaticField::setWidth(unsigned char width)
 {
     this->width = width;
@@ -78,42 +88,10 @@ bool StaticField::canMove(unsigned char position)
     return (!walls.at(position));
 }
 
-Field::Field() : playerPos(0),
-    boxes(NULL)
-
+Field::Field() : playerPos(0)
 {
 
 }
-
-//Field::~Field()
-//{
-//    delete [] boxes;
-//}
-
-Field::Field(Field &f)
-{
-    this->playerPos = f.playerPos;
-    this->boxes = new unsigned char[f.sField->getBoxesCount()];
-    memcpy(boxes,f.boxes,f.sField->getBoxesCount());
-}
-
-Field &Field::operator =(const Field &f)
-{
-    if(this == &f)
-    {
-        return *this;
-    }
-    else
-    {
-        this->playerPos = f.playerPos;
-        this->boxes = new unsigned char[f.sField->getBoxesCount()];
-        memcpy(boxes,f.boxes,f.sField->getBoxesCount());
-        return *this;
-    }
-
-}
-
-
 
 void Field::readFieldFromFlie(std::istream &in)
 {
@@ -121,12 +99,11 @@ void Field::readFieldFromFlie(std::istream &in)
     {
         throw "Error with input stream!";
     }
-    std::vector<char> bufBoxes;
     unsigned char coordinate = 0;
     int currentWidth = 0;
     int width = 0;
     int height = 1;
-//    bool newString = true;
+    int boxIndex = 0;
     while(1)
     {
         unsigned char c = in.get();
@@ -139,32 +116,28 @@ void Field::readFieldFromFlie(std::istream &in)
         {
         case '#':
             //Стена
-            sField->addWallOrPlace(1,0);
-            std::cout<<"#";
+            sField->addWallOrPlace(1,0);            
             break;
         case '$':
             //Место под ящик
-            sField->addWallOrPlace(0,1);
-            std::cout<<"$";
+            sField->addWallOrPlace(0,1);            
             break;
         case 'X':
             //Ящик на месте для ящика
             sField->addWallOrPlace(0,1);
-            bufBoxes.push_back(coordinate);
-            std::cout<<"X";
+            boxes[boxIndex] = coordinate;
+            boxIndex++;
             break;
         case 'B':
             //Ящик
             sField->addWallOrPlace(0,0);
-            bufBoxes.push_back(coordinate);
-            std::cout<<"B";
+            boxes[boxIndex] = coordinate;
+            boxIndex++;
             break;
         case ' ':
-            std::cout<<" ";
             sField->addWallOrPlace(0,0);
             break;
         case '\n':
-            std::cout<<"\n";
             if(currentWidth > width)
             {
                 width = currentWidth;
@@ -176,58 +149,55 @@ void Field::readFieldFromFlie(std::istream &in)
         case 'P':
             //игрок
             sField->addWallOrPlace(0,0);
-            playerPos = coordinate;
-            std::cout<<"P";
+            playerPos = coordinate;         
             break;
         default:
-            std::cout<<"default";
             break;
         }
         coordinate++;
         currentWidth++;
-
+        if(boxIndex > MAX_BOXES)
+        {
+            throw "Error with count of boxes. Check MAX_BOXES";
+        }
     }
-    std::cout<<std::endl<<(int)coordinate<<std::endl<<(int)width<<std::endl;
-    sField->setBoxesCount(bufBoxes.size());
+    sField->setBoxesCount(boxIndex);
     sField->setWidth(width);
     sField->setHeight(height);
-    boxes = new unsigned char [sField->getBoxesCount()];
-    for(int i = 0; i < sField->getBoxesCount(); i++)
-    {
-        boxes[i] = bufBoxes.at(i);
-        std::cout<<"Box #"<<i<<" "<<(int)boxes[i]<<" ";
-    }
-    std::cout <<"Player position "<< (int)playerPos<<std::endl;
-    bufBoxes.clear();
+
 }
 
 bool Field::move(Directions direction)
 {
     unsigned char width = sField->getWidth();
-    unsigned char height = sField->getHeight();
+    unsigned char newPosition = 0;
     switch(direction)
     {
     case Up:
-        if((playerPos >= width) && (sField->canMove(playerPos - width)))
+        newPosition = playerPos - width;
+        if(sField->canMove(newPosition))
         {
-            for(int i=0 ; i < sField->getBoxesCount() ; i++)
+            char index = checkBox(newPosition);
+            if(index != -1)
             {
-                if(boxes[i] == playerPos - width)
+                if(sField->canMove(newPosition - width))
                 {
-                    if((playerPos - width >= width) && sField->canMove(playerPos - 2*width))
+                    if(checkBox(newPosition - width)!= -1)
                     {
-                        playerPos = boxes[i];
-                        boxes[i] -= width;
-                        return true;
+                        std::cout<<"no"<<std::endl;
+                        return false;
                     }
                     else
                     {
-                        return false;
+                        boxes[(int)index] -= width;
+                        this->sortBoxes();
                     }
                 }
+                else
+                {
+                    return false;
+                }
             }
-            playerPos -= width;
-            return true;
         }
         else
         {
@@ -235,33 +205,30 @@ bool Field::move(Directions direction)
         }
         break;
     case Right:
-        if(sField->canMove(playerPos + 1))
+        newPosition = playerPos + 1;
+        if(sField->canMove(newPosition))
         {
-            for(int i = 0; i < sField->getBoxesCount() ; i++)
+            char index = checkBox(newPosition);
+            if(index != -1)
             {
-                if(boxes[i] == playerPos + 1)
+                if(sField->canMove(newPosition + 1))
                 {
-                    if(sField->canMove(playerPos + 2))
+                    if(checkBox(newPosition + 1)!=-1)
                     {
-                        for(int j = i; j < sField->getBoxesCount() ; j++)
-                        {
-                            if(boxes[j] == playerPos + 2)
-                            {
-                                return false;
-                            }
-                        }
-                        playerPos = boxes[i];
-                        boxes[i]++;
-                        return true;
+                        std::cout<<"no"<<std::endl;
+                        return false;
                     }
                     else
                     {
-                        return false;
+                        boxes[(int)index]++;
+                        this->sortBoxes();
                     }
                 }
+                else
+                {
+                    return false;
+                }
             }
-            playerPos++;
-            return true;
         }
         else
         {
@@ -269,15 +236,74 @@ bool Field::move(Directions direction)
         }
         break;
     case Down:
+        newPosition = playerPos + width;
+        if(sField->canMove(newPosition))
+        {
+            char index = checkBox(newPosition);
+            if(index != -1)
+            {
+                if(sField->canMove(newPosition + width))
+                {
+                    if(checkBox(newPosition + width)!=-1)
+                    {
+                        std::cout<<"no"<<std::endl;
+                        return false;
+                    }
+                    else
+                    {
+                        boxes[(int)index] += width;
+                        this->sortBoxes();
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
         break;
     case Left:
-
+        newPosition = playerPos -1;
+        if(sField->canMove(newPosition))
+        {
+            char index = checkBox(newPosition);
+            if(index != -1)
+            {
+                if(sField->canMove(newPosition - 1))
+                {
+                    if(checkBox(newPosition - 1)!=-1)
+                    {
+                        std::cout<<"no"<<std::endl;
+                        return false;
+                    }
+                    else
+                    {
+                        boxes[(int)index]--;
+                        this->sortBoxes();
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        }
+        else
+        {
+            return false;
+        }
         break;
     default:
-        std::cerr<<"Unknow direction"<<std::endl;
+        std::cerr<<"ERROR!! Unknow direction"<<std::endl;
+        return false;
         break;
     }
-    return false;
+    playerPos = newPosition;
+    return true;
 
 }
 
@@ -322,11 +348,6 @@ unsigned char *Field::getBoxes()
 
 unsigned long Field::getMemory()
 {
-//    std::vector<char> degrees;
-//    for(int i = sField->getBoxesCount() - 1; i  >= 0; i--)
-//    {
-//        degrees.push_back();
-//    }
     unsigned long index = playerPos;
     unsigned char coordinate = sField->getHeight() * sField->getWidth();
     unsigned char count = sField->getBoxesCount();
@@ -335,5 +356,72 @@ unsigned long Field::getMemory()
         index += boxes[i] * pow(coordinate , i+1);
     }
     return index;
+}
+
+void Field::printField()
+{
+    unsigned char maxCoordinate = sField->getHeight() * sField->getWidth();
+    for(unsigned char i = 0 ; i < maxCoordinate ; i++)
+    {
+
+        if(sField->wallAt(i))
+        {
+            std::cout<<"#";
+        }
+        else if(sField->placeAt(i))
+        {
+            if(checkBox(i)!=-1)
+            {
+                std::cout<<"X";
+            }
+            else
+            {
+                std::cout<<"$";
+            }
+        }
+        else if(checkBox(i)!=-1)
+        {
+            std::cout<<"B";
+        }
+        else if(playerPos == i)
+        {
+            std::cout<<"P";
+        }
+        else
+        {
+            std::cout<<" ";
+        }
+        if( ((i+1) % sField->getWidth())==0)
+        {
+            std::cout<<std::endl;
+        }
+
+    }
+}
+
+void Field::sortBoxes()
+{
+    unsigned char buf;
+    for(int i = 1 ; i < sField->getBoxesCount() ; i++)
+    {
+        for(int j = i; j > 0 && boxes[j-1] > boxes[j]; j--)
+        {
+            buf = boxes[j-1];
+            boxes[j - 1] = boxes[j];
+            boxes[j] = buf;
+        }
+    }
+}
+
+char Field::checkBox(unsigned char position)
+{
+    for(char i = 0 ; i<sField->getBoxesCount(); i++)
+    {
+        if(boxes[(int)i] == position)
+        {
+            return i;
+        }
+    }
+    return -1;
 }
 
