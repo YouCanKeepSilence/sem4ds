@@ -48,6 +48,19 @@ void StaticField::setBoxesCount(unsigned char boxesCount)
     this->boxesCount = boxesCount;
 }
 
+void StaticField::configureWinPlaces()
+{
+    unsigned char boxNum = 0;
+    for(unsigned char i=0 ; i < places.size(); i++)
+    {
+        if(places.at(i)==1)
+        {
+            winPlaces[boxNum] = i;
+            boxNum++;
+        }
+    }
+}
+
 unsigned char StaticField::getWidth()
 {
     return width;
@@ -65,22 +78,7 @@ unsigned char StaticField::getBoxesCount()
 
 unsigned char *StaticField::getPlacesIndexes()
 {
-    std::vector<unsigned char> buf;
-    for(unsigned char i=0 ; i < places.size(); i++)
-    {
-        if(places.at(i)==1)
-        {
-            buf.push_back(i);
-        }
-    }
-    unsigned char * indexes;
-    indexes = new unsigned char [buf.size()];
-    for(unsigned long i = 0; i<buf.size(); i++)
-    {
-        indexes[i] = buf[i];
-    }
-    buf.clear();
-    return indexes;
+    return winPlaces;
 }
 
 bool StaticField::canMove(unsigned char position)
@@ -164,7 +162,7 @@ void Field::readFieldFromFlie(std::istream &in)
     sField->setBoxesCount(boxIndex);
     sField->setWidth(width);
     sField->setHeight(height);
-
+    sField->configureWinPlaces();
 }
 
 bool Field::move(Directions direction)
@@ -184,7 +182,7 @@ bool Field::move(Directions direction)
                 {
                     if(checkBox(newPosition - width)!= -1)
                     {
-                        std::cout<<"no"<<std::endl;
+//                        std::cout<<"no"<<std::endl;
                         return false;
                     }
                     else
@@ -215,7 +213,7 @@ bool Field::move(Directions direction)
                 {
                     if(checkBox(newPosition + 1)!=-1)
                     {
-                        std::cout<<"no"<<std::endl;
+//                        std::cout<<"no"<<std::endl;
                         return false;
                     }
                     else
@@ -246,7 +244,7 @@ bool Field::move(Directions direction)
                 {
                     if(checkBox(newPosition + width)!=-1)
                     {
-                        std::cout<<"no"<<std::endl;
+//                        std::cout<<"no"<<std::endl;
                         return false;
                     }
                     else
@@ -277,7 +275,7 @@ bool Field::move(Directions direction)
                 {
                     if(checkBox(newPosition - 1)!=-1)
                     {
-                        std::cout<<"no"<<std::endl;
+//                        std::cout<<"no"<<std::endl;
                         return false;
                     }
                     else
@@ -346,9 +344,9 @@ unsigned char *Field::getBoxes()
     return boxes;
 }
 
-unsigned long Field::getMemory()
+unsigned long long Field::getMemory()
 {
-    unsigned long index = playerPos;
+    unsigned long long index = playerPos;
     unsigned char coordinate = sField->getHeight() * sField->getWidth();
     unsigned char count = sField->getBoxesCount();
     for(int i = 0; i < count; i++)

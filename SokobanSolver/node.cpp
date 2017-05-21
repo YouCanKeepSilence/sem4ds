@@ -12,12 +12,12 @@ Node::Node(const Field &fi, Node *parent)
     this->parent = parent;
 }
 
-Field Node::getField()
+Field Node::getField() const
 {
     return this->field;
 }
 
-Node *Node::getParent()
+const Node *Node::getParent() const
 {
     return this->parent;
 }

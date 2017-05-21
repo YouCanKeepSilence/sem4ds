@@ -8,7 +8,7 @@
 #include <unistd.h>
 using namespace std;
 
-void wayToWin(Node* node)
+void wayToWin(const Node* node)
 {
     list<Field> way;
     while(node->getParent()!=NULL)
@@ -50,15 +50,16 @@ int main(int argc, char *argv[])
     std::list<Node> states;
     bool win = false;
     unsigned char coordinates = fi.getHeight() * fi.getWidth();
-    unsigned long maxSize =  pow(coordinates , (fi.getBoxesCount()+1));
-
+    unsigned long long maxSize =  pow(coordinates , (fi.getBoxesCount()+1));
     memory.resize(maxSize);
-    cout<<"Начальное поле"<<endl;
+    cout<<"Start field "<<endl;
     fi.printField();
-    cout<<"Высота "<<(int)fi.getHeight()<<endl;
-    cout<<"Ширина "<<(int)fi.getWidth()<<endl;
-    cout<<"Кол-во коробок "<<(int)fi.getBoxesCount()<<endl;
-    cout<<"maxSize "<<maxSize<<" vec size "<<memory.size()<<endl;
+    cout<<"Height "<<(int)fi.getHeight()<<endl;
+    cout<<"Width "<<(int)fi.getWidth()<<endl;
+    cout<<"Count of boxes "<<(int)fi.getBoxesCount()<<endl;
+    cout<<"Count of bool "<<maxSize <<" Size in memory "<<memory.size()<<endl;
+    cout<<"Size of Field "<<sizeof(Field)<<endl;
+    cout<<"Size of Node "<<sizeof(Node)<<endl;
     sleep(5);
     states.push_back(Node(fi,NULL));
     list<Node>::iterator currentNode = states.begin();
@@ -75,11 +76,11 @@ int main(int argc, char *argv[])
             f = (*currentNode).getField();
             if(f.move((Directions)DIR))
             {
-                cout<<"move "<<endl;
-                cout<<"index "<<f.getMemory()<<endl;
+//                cout<<"move "<<endl;
+//                cout<<"index "<<f.getMemory()<<endl;
                 if(memory.at(f.getMemory())==false)
                 {
-                    cout<<"check"<<endl;
+//                    cout<<"check"<<endl;
                     memory[f.getMemory()] = true;
                     states.push_back(Node(f,&(*currentNode)));
                     if(f.checkForWin())
