@@ -20,7 +20,7 @@ void wayToWin(const Node* node)
     {
         system("clear");
         (*it).printField();
-        sleep(1);
+        usleep(90000);
     }
 
 }
@@ -28,6 +28,7 @@ void wayToWin(const Node* node)
 
 int main(int argc, char *argv[])
 {
+    clock_t start = clock();
     if(argc != 2)
     {
         cerr << "Unexpected number of arguments"<<endl;
@@ -43,7 +44,7 @@ int main(int argc, char *argv[])
     }
     catch(const char * error)
     {
-        cerr << error<<endl;
+        cerr << error <<endl;
         exit(1);
     }
     std::vector<bool> memory;
@@ -51,13 +52,14 @@ int main(int argc, char *argv[])
     bool win = false;
     unsigned char coordinates = fi.getHeight() * fi.getWidth();
     unsigned long long maxSize =  pow(coordinates , (fi.getBoxesCount()+1));
-    memory.resize(maxSize);
+    system("clear");
     cout<<"Start field "<<endl;
     fi.printField();
     cout<<"Height "<<(int)fi.getHeight()<<endl;
     cout<<"Width "<<(int)fi.getWidth()<<endl;
     cout<<"Count of boxes "<<(int)fi.getBoxesCount()<<endl;
-    cout<<"Count of bool "<<maxSize <<" Size in memory "<<memory.size()<<endl;
+    memory.resize(maxSize);
+    cout<<"Count of bool "<<maxSize <<" Size in memory "<<memory.size() / 8<<endl;
     cout<<"Size of Field "<<sizeof(Field)<<endl;
     cout<<"Size of Node "<<sizeof(Node)<<endl;
     sleep(5);
@@ -76,18 +78,15 @@ int main(int argc, char *argv[])
             f = (*currentNode).getField();
             if(f.move((Directions)DIR))
             {
-//                cout<<"move "<<endl;
-//                cout<<"index "<<f.getMemory()<<endl;
                 if(memory.at(f.getMemory())==false)
                 {
-//                    cout<<"check"<<endl;
                     memory[f.getMemory()] = true;
                     states.push_back(Node(f,&(*currentNode)));
                     if(f.checkForWin())
                     {
                         win = true;
-                        cout<<"ETO POBEDA!"<<endl;
-
+                        cout<<"Win found. Lets watch result..."<<endl;
+                        sleep(2);
                         wayToWin(&states.back());
                         break;
                     }
@@ -96,6 +95,7 @@ int main(int argc, char *argv[])
         }
         currentNode++;
     }
+    cout<<"Elapsed time : "<< (clock() - start)/CLOCKS_PER_SEC<<" seconds."<<endl;
     in.close();
     return 0;
 }

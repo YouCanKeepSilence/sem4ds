@@ -96,66 +96,90 @@ void Field::readFieldFromFlie(std::istream &in)
         throw "Error with input stream!";
     }
     unsigned char coordinate = 0;
-    int currentWidth = 0;
-    int width = 0;
+    std::vector<std::string> strings;
+    unsigned int width = 0;
     int height = 1;
     int boxIndex = 0;
-    while(1)
+    std::string bufstr;
+    while(1)                                // Собираем массив строк из файла (Наша карта)
     {
         unsigned char c = in.get();
         if(in.eof())
         {
+            strings.push_back(bufstr);
             break;
         }
-
-        switch(c)
+        if( c == '\n')
         {
-        case '#':
-            //Стена
-            sField->addWallOrPlace(1,0);            
-            break;
-        case '$':
-            //Место под ящик
-            sField->addWallOrPlace(0,1);            
-            break;
-        case 'X':
-            //Ящик на месте для ящика
-            sField->addWallOrPlace(0,1);
-            boxes[boxIndex] = coordinate;
-            boxIndex++;
-            break;
-        case 'B':
-            //Ящик
-            sField->addWallOrPlace(0,0);
-            boxes[boxIndex] = coordinate;
-            boxIndex++;
-            break;
-        case ' ':
-            sField->addWallOrPlace(0,0);
-            break;
-        case '\n':
-            if(currentWidth > width)
-            {
-                width = currentWidth;
-            }
+            strings.push_back(bufstr);
             height++;
-            currentWidth = -1;
-            coordinate--;
-            break;
-        case 'P':
-            //игрок
-            sField->addWallOrPlace(0,0);
-            playerPos = coordinate;         
-            break;
-        default:
-            break;
+            bufstr.clear();
+            continue;
         }
-        coordinate++;
-        currentWidth++;
-        if(boxIndex > MAX_BOXES)
+        bufstr.push_back(c);
+
+    }
+    for(unsigned int i = 0; i<strings.size() ; i++)     // Находим масксимальную ширину
+    {
+        if(width < strings[i].length())
         {
-            throw "Error with count of boxes. Check MAX_BOXES";
+            width = strings[i].length();
         }
+    }
+    for(unsigned int i = 0; i < strings.size() ; i++)   //Дополняем недостающее пространство до максимальной ширины пробелами
+    {
+        while(strings[i].length() < width)
+        {
+            strings[i].push_back(' ');
+        }
+    }
+    for(unsigned int i = 0; i < strings.size(); i++)    // Разбираем карту на символы и инициализируем поле
+    {
+        for(unsigned int j = 0; j < strings[i].length() ; j++)
+        {
+            unsigned char c = strings[i].at(j);
+            switch(c)
+            {
+            case '#':
+                //Стена
+                sField->addWallOrPlace(1,0);
+                break;
+            case '$':
+                //Место под ящик
+                sField->addWallOrPlace(0,1);
+                break;
+            case 'X':
+                //Ящик на месте для ящика
+                sField->addWallOrPlace(0,1);
+                boxes[boxIndex] = coordinate;
+                boxIndex++;
+                break;
+            case 'B':
+                //Ящик
+                sField->addWallOrPlace(0,0);
+                boxes[boxIndex] = coordinate;
+                boxIndex++;
+                break;
+            case ' ':
+                sField->addWallOrPlace(0,0);
+                break;
+            case 'P':
+                //игрок
+                sField->addWallOrPlace(0,0);
+                playerPos = coordinate;
+                break;
+            default:
+                std::cout<<(int)c<<std::endl;
+                throw "Error Unknown symbol";
+                break;
+            }
+            coordinate++;
+            if(boxIndex > MAX_BOXES)
+            {
+                throw "Error with count of boxes. Check MAX_BOXES";
+            }
+        }
+//        height++;
     }
     sField->setBoxesCount(boxIndex);
     sField->setWidth(width);
@@ -315,8 +339,12 @@ void Field::printField()
 
 void Field::sortBoxes()
 {
+    if(sField->getBoxesCount() < 2)         // Массив из одной коробки считается отсортированным
+    {
+        return;
+    }
     unsigned char buf;
-    for(int i = 1 ; i < sField->getBoxesCount() ; i++)
+    for(int i = 1 ; i < sField->getBoxesCount() ; i++)      // Сортировка вставками
     {
         for(int j = i; j > 0 && boxes[j-1] > boxes[j]; j--)
         {
