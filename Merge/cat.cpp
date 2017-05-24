@@ -1,11 +1,12 @@
 #include "cat.h"
 
-Cat::Cat(std::string name, std::string breed, int age, char gender)
+Cat::Cat(std::string name, std::string breed, int age, char gender):
+    name(name),
+    breed(breed),
+    age(age),
+    gender(gender)
 {
-    this->name=name;
-    this->breed=breed;
-    this->age=age;
-    this->gender=gender;
+
 }
 
 int Cat::getAge()
@@ -26,6 +27,34 @@ std::string Cat::getBreed()
 char Cat::getGender()
 {
     return this->gender;
+}
+
+void Cat::printCat()
+{
+    std::cout<<"Name "<<this->name<<std::endl;
+    std::cout<<"Breed "<<this->breed<<std::endl;
+    std::cout<<"Age "<<this->age<<std::endl;
+    std::cout<<"Gender "<<this->gender<<std::endl;
+}
+
+bool Cat::lessThenByName(const Cat &cat)
+{
+    return (this->name < cat.name);
+}
+
+bool Cat::lessThenByBreed(const Cat &cat)
+{
+    return (this->breed < cat.breed);
+}
+
+bool Cat::lessThenByAge(const Cat &cat)
+{
+    return (this->age < cat.age);
+}
+
+bool Cat::lessThenByGender(const Cat &cat)
+{
+    return (this->gender < cat.gender);
 }
 
 std::istream& operator>>(std::istream &stream,Cat &cat)

@@ -4,7 +4,8 @@
 #include <fstream>
 #include <iostream>
 #define MAX_SIZE_OF_NAME 11
-#define MAX_SIZE_OF_BREED 36
+#define MAX_SIZE_OF_BREED 30
+#define CLASS_SIZE 46
 class Cat
 {
 public:
@@ -15,6 +16,11 @@ public:
     std::string getName();
     std::string getBreed();
     char getGender();
+    void printCat();
+    bool lessThenByName( const Cat & cat);
+    bool lessThenByBreed(const Cat & cat);
+    bool lessThenByAge(const Cat & cat);
+    bool lessThenByGender(const Cat & cat);
 private:
     std::string name;
     std::string breed;

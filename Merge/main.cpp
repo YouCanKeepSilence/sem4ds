@@ -5,29 +5,47 @@ using namespace std;
 
 int main(int argc, char *argv[])
 {
-    Cat cat("Vasya","Russia",66666,'m');
-    ofstream out;
-    system("clear");
-    cout<<cat<<endl;
-    cout<<cat.getAge()<<endl;
-    out.open("vasya.txt",ios_base::binary);
-    if(!out.is_open())
-    {
-        return 1;
-    }
-    out<<cat;
-    out.close();
+
     ifstream in;
-    in.open("vasya.txt",ios_base::binary);
+    system("clear");
+    in.open("dictionary.txt",ios_base::binary);
     if(!in.is_open())
     {
         return 1;
     }
-    Cat c;
-    in>>c;
-    cout<<"_________________"<<endl;
-    cout<<c<<endl;
-    cout<<c.getAge();
+    in.seekg(0 , in.end);
+    unsigned int point = in.tellg() / CLASS_SIZE;
+    in.seekg(0,in.beg);
+    in.close();
+    while(1)
+    {
+        string name1 = "half1.txt";
+        string name2 = "half2.txt";
+        ofstream buf1;
+        ofstream buf2;
+        buf1.open(name1,ios::binary);
+        buf2.open(name2,ios::binary);
+        if(!buf1.is_open() || !buf2.is_open())
+        {
+            cerr<<"Bad files"<<endl;
+            return 1;
+        }
+        for(unsigned int i = 0 ; i < point/2 ; i++)
+        {
+            Cat c;
+            in >> c;
+            buf1<<c;
 
+        }
+        for(unsigned int i = point/2 ; i < point ; i++)
+        {
+            Cat c;
+            in >> c;
+            buf2<<c;
+        }
+        buf1.close();
+        buf2.close();
+
+    }
     return 0;
 }
