@@ -15,10 +15,15 @@ private:
     std::string name3;
     std::string name4;
 
+    unsigned int fileSizeInCats;    //Размер файла в котах)
+    unsigned int blockSize;     // Размер упорядоченного блока
     Cat cats[2];                //Буферные коты
+
     bool currentCat;            // Текущий кот
     bool currentOutput;         //Текущий вывод
     bool currentInput;          //Текущий ввод
+
+
     std::ifstream inputs[2];    // Потоки ввода
     std::ofstream outputs[2];   // Потоки вывода
 
