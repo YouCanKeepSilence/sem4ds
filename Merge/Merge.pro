@@ -4,7 +4,9 @@ CONFIG -= app_bundle
 CONFIG -= qt
 
 SOURCES += main.cpp \
-    cat.cpp
+    cat.cpp \
+    sorter.cpp
 
 HEADERS += \
-    cat.h
+    cat.h \
+    sorter.h
