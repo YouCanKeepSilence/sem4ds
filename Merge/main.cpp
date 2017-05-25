@@ -7,28 +7,27 @@ using namespace std;
 int main(int argc, char *argv[])
 {
 
-    ifstream in;
+
     system("clear");
-    in.open("dictionarySmall.txt",ios_base::binary);
-//    Sorter sorter;
-//    sorter.Sort("dictionarySmall.txt");
-//    for(int i=0; i < 15 ; i++)
-//    {
-//        Cat c;
-//        in >> c;
-//        c.printCat();
-//    }
+
+//    Sorter sorter("dictionaryUltraSmall.txt");
+//    sorter.sort();
+    ifstream in;
+    in.open("~forMerge3.dat",ios_base::binary);
+    Cat c;
+    int temp = 0;
+    in >> c;
     while(!in.eof())
     {
-        Cat c;
-
-        in>>c;
-        if(in.eof())
+        if(temp > c.getAge())
         {
-            c.printCat();
-            break;
+            cout<<"Error"<<endl;
         }
+        temp = c.getAge();
         c.printCat();
+//        cout<<temp<<endl;
+        in >> c;
+
     }
     return 0;
 }
