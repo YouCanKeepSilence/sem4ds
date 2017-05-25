@@ -10,7 +10,7 @@ int main(int argc, char *argv[])
 
     system("clear");
 
-//    Sorter sorter("dictionaryUltraSmall.txt");
+//    Sorter sorter("dictionary.txt");
 //    sorter.sort();
     ifstream in;
     in.open("~forMerge3.dat",ios_base::binary);
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
             cout<<"Error"<<endl;
         }
         temp = c.getAge();
-        c.printCat();
+//        c.printCat();
 //        cout<<temp<<endl;
         in >> c;
 

@@ -18,6 +18,7 @@ Sorter::Sorter(std::string startName, std::string resultName)
 
 void Sorter::sort()
 {
+    int debugCounter=0;
     shrinkStartFile();
     try
     {
@@ -66,6 +67,8 @@ void Sorter::sort()
                 if(allEnds)
                 {
                     std::cout<<"End in sequence loop both eof"<<std::endl;
+                    writeCat(!currentCat);
+                    debugCounter++;
                     break;
                 }
 //                std::cout<<"Read new cat from "<<(int)currentRead <<std::endl;
@@ -111,7 +114,7 @@ void Sorter::sort()
             return ;
         }
     }
-
+    std::cout<< "Counts of non eaual files "<<debugCounter<<std::endl;
 //    makeResult();
 }
 
