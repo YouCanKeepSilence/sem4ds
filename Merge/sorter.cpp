@@ -32,8 +32,6 @@ void Sorter::sort()
 
     while(blockSize <= fileSizeInCats )
     {
-//        char state;
-
         currentOutput = 0;
         currentInput = 0;
         while(1)
@@ -59,8 +57,6 @@ void Sorter::sort()
             {
                 if(eofStream != -1)         //Если в каком-то потоке конец, то шарашим из другого потока
                 {
-                    std::cout<<std::endl<<"!!!! eof in "<<(int)eofStream<<" !!!!!!!!"<<std::endl;
-                    std::cout<<"Read form "<<(int)!eofStream<<" now "<<std::endl<<std::endl;
                     currentRead = !eofStream;
                 }
                 cats[(int)currentCat] = readOneCat(currentRead , fullBlock , eofStream , allEnds);
@@ -71,18 +67,11 @@ void Sorter::sort()
                     debugCounter++;
                     break;
                 }
-//                std::cout<<"Read new cat from "<<(int)currentRead <<std::endl;
-//                cats[(int)currentCat].printCat();
-//                std::cout<<"-------------------------";
-//                std::cout<<std::endl;
                 if(fullBlock)
                 {
 
-                    std::cout<<std::endl<<"Full block";
                     writeCat(!currentCat);
-                    std::cout<<" output changed from "<<currentOutput << " to ";
                     currentOutput = !currentOutput;
-                    std::cout<<currentOutput<<std::endl<<std::endl;
                     break;
                 }
                 if(cats[0].lessThenByAge(cats[1]))
@@ -99,10 +88,7 @@ void Sorter::sort()
                 }
             }
         }
-//        if(blockSize == 4)
-//            break;
         blockSize *= 2;
-
         std::cout<<blockSize <<std::endl;
         try
         {
@@ -114,8 +100,14 @@ void Sorter::sort()
             return ;
         }
     }
-    std::cout<< "Counts of non eaual files "<<debugCounter<<std::endl;
-//    makeResult();
+    try
+    {
+        makeResult();
+    }
+    catch(const char * error)
+    {
+        std::cerr << error<<std::endl;
+    }
 }
 
 Cat Sorter::readOneCat(bool stream , bool &fullBlock, char &whereEnd, bool &bothEnd)
@@ -125,7 +117,6 @@ Cat Sorter::readOneCat(bool stream , bool &fullBlock, char &whereEnd, bool &both
     bool readed2 = false;
     bool eof1 = false;
     bool eof2 = false;
-//    bool fileEnd = false;
     Cat kitty;
     if(readFrom[(int)stream] < blockSize)
     {
@@ -245,6 +236,18 @@ void Sorter::shrinkStartFile()
     outputs[0].close();
     outputs[1].close();
 
+}
+
+void Sorter::makeResult()
+{
+    if(std::rename(name1.c_str(),resultFile.c_str()))
+    {
+        throw "Error with rename result file. Real name is "+name1;
+    }
+    if(std::remove(name2.c_str()) || std::remove(name3.c_str()) || std::remove(name4.c_str()))
+    {
+        throw "Error with deleting buf files";
+    }
 }
 
 void Sorter::writeCat(bool index)

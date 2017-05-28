@@ -3,9 +3,9 @@
 #include <string>
 #include <fstream>
 #include <iostream>
-#define MAX_SIZE_OF_NAME 11
-#define MAX_SIZE_OF_BREED 30
-#define CLASS_SIZE 46
+#define MAX_SIZE_OF_NAME 22
+#define MAX_SIZE_OF_BREED 60
+#define CLASS_SIZE 87
 class Cat
 {
 public:
