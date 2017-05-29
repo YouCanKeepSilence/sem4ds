@@ -1,6 +1,6 @@
 #include "sorter.h"
 #include <fstream>
-Sorter::Sorter(std::string startName, std::string resultName)
+Sorter::Sorter(std::string startName, std::string resultName, unsigned short state)
 {
     this->startFile = startName;
     this->resultFile = resultName;
@@ -14,14 +14,35 @@ Sorter::Sorter(std::string startName, std::string resultName)
     this->name2 = "~forMerge2.dat";
     this->name3 = "~forMerge3.dat";
     this->name4 = "~forMerge4.dat";
+    setTypeOfSort(state);
+}
+
+void Sorter::setTypeOfSort(unsigned short state)
+{
+    switch (state) {
+    case 0:
+        lessThan = &Cat::lessThenByAge;
+        break;
+    case 1:
+        lessThan = &Cat::lessThenByBreed;
+        break;
+    case 2:
+        lessThan = &Cat::lessThenByName;
+        break;
+    default:
+        std::cerr << "Unknow state. Set zero";
+        lessThan = &Cat::lessThenByAge;
+        break;
+    }
 }
 
 void Sorter::sort()
 {
     int debugCounter=0;
-    shrinkStartFile();
+    Cat lastOfHisKind;
     try
     {
+        shrinkStartFile();
         openAll();
     }
     catch ( const char * error)
@@ -39,42 +60,25 @@ void Sorter::sort()
             readFrom[0] = 0;
             readFrom[1] = 0;
             bool fullBlock = false;
-            bool allEnds = false;
-            char eofStream = -1;
-            cats[0] = readOneCat(0,fullBlock,eofStream , allEnds);
-            if(allEnds)
+            cats[0] = readOneCat(0,fullBlock);
+            if(fullBlock)
             {
                 std::cout<<"End in main cycle"<<std::endl;
                 break;
             }
             bool currentRead = 1;
             currentCat = currentRead;
-            if(eofStream != -1)
-            {
-                currentCat = 0;
-            }
             while(1)
             {
-                if(eofStream != -1)         //Если в каком-то потоке конец, то шарашим из другого потока
-                {
-                    currentRead = !eofStream;
-                }
-                cats[(int)currentCat] = readOneCat(currentRead , fullBlock , eofStream , allEnds);
-                if(allEnds)
-                {
-                    std::cout<<"End in sequence loop both eof"<<std::endl;
-                    writeCat(!currentCat);
-                    debugCounter++;
-                    break;
-                }
+                cats[(int)currentCat] = readOneCat(currentRead , fullBlock);
                 if(fullBlock)
                 {
-
                     writeCat(!currentCat);
+                    lastOfHisKind = cats[(int)!currentCat];
                     currentOutput = !currentOutput;
                     break;
                 }
-                if(cats[0].lessThenByAge(cats[1]))
+                if((cats[0].*lessThan)(cats[1]))
                 {
                     writeCat(0);
                     currentRead = 0;
@@ -103,6 +107,7 @@ void Sorter::sort()
     try
     {
         makeResult();
+        lastOfHisKind.printCat();
     }
     catch(const char * error)
     {
@@ -110,51 +115,36 @@ void Sorter::sort()
     }
 }
 
-Cat Sorter::readOneCat(bool stream , bool &fullBlock, char &whereEnd, bool &bothEnd)
+Cat Sorter::readOneCat(bool stream , bool &fullBlock)
 {
     fullBlock = false;
     bool readed1 = false;
     bool readed2 = false;
-    bool eof1 = false;
-    bool eof2 = false;
     Cat kitty;
     if(readFrom[(int)stream] < blockSize)
     {
         inputs[(int)stream] >> kitty;
-
-        if(inputs[(int)stream].eof())
-        {
-            whereEnd = 0;
-            eof1 = true;
-        }
-        else
+        if(!inputs[(int)stream].eof())
         {
             readFrom[(int)stream]++;
             readed1 = true;
+            return kitty;
         }
     }
-    if(readFrom[(int)!stream] < blockSize && (!readed1 || eof1))
+    if(readFrom[(int)!stream] < blockSize )
     {
         inputs[(int)!stream] >> kitty;
 
-        if(inputs[(int)!stream].eof())
-        {
-            eof2 = true;
-            whereEnd = 1;
-        }
-        else
+        if(!inputs[(int)!stream].eof())
         {
             readFrom[(int)!stream]++;
             readed2 = true;
+            return kitty;
         }
     }
     if(!readed1 && !readed2)
     {
         fullBlock = true;
-    }
-    if(eof1 && eof2)
-    {
-        bothEnd = true;
     }
     return kitty;
 
@@ -253,9 +243,5 @@ void Sorter::makeResult()
 void Sorter::writeCat(bool index)
 {
     outputs[(int)currentOutput] << cats[(int)index];
-//    std::cout<<"write cat"<<std::endl;
-//    cats[(int)index].printCat();
-//    std::cout<<"------------------------"<<std::endl;
-
 }
 
