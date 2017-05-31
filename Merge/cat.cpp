@@ -37,6 +37,7 @@ void Cat::printCat()
     std::cout<<"Gender "<<this->gender<<std::endl;
 }
 
+
 bool Cat::lessThenByName(const Cat &cat)
 {
     return (this->name < cat.name);

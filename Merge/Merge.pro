@@ -5,8 +5,10 @@ CONFIG -= qt
 
 SOURCES += main.cpp \
     cat.cpp \
-    sorter.cpp
+    sorter.cpp \
+    finder.cpp
 
 HEADERS += \
     cat.h \
-    sorter.h
+    sorter.h \
+    finder.h
