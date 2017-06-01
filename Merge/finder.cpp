@@ -30,7 +30,51 @@ std::string Finder::getFileWithAges()
     return this->sortByAge;
 }
 
-void Finder::find(int age)
+void Finder::find(int from, int to)
+{
+    if(to == 0)     //Если задано только старт
+    {
+        to = from;
+    }
+    long long offset;
+    try
+    {
+        offset = findOffset(from);
+    }
+    catch(const char * error)
+    {
+        std::cerr<<error<<std::endl;
+        return;
+    }
+    std::ifstream in;
+    in.open(sortByAge , std::ios::binary);
+    if(!in.is_open())
+    {
+        throw "Error no file " + sortByAge + " or it can't be open";
+    }
+    if(offset == -1)
+    {
+        std::cout<<"We don't have cats with this options"<<std::endl;
+        return;
+    }
+    in.seekg(offset, in.beg);
+    Cat kitty;
+    in >> kitty;
+    while(kitty.getAge() <= to && !in.eof())
+    {
+        kitty.printCat();
+        in>>kitty;
+    }
+    in.close();
+
+}
+
+void Finder::find(std::string word)
+{
+
+}
+
+long long Finder::findOffset(int age)
 {
     std::ifstream in;
     in.open(sortByAge , std::ios::binary);
@@ -38,71 +82,64 @@ void Finder::find(int age)
     {
         throw "Error no file " + sortByAge + " or it can't be open";
     }
-    std::streampos RightEdge;
-    std::streampos LeftEdge;
-    LeftEdge = in.tellg(); // CLASS_SIZE;     //Начало потока ( в котах)
+    long long RightEdge;
+    long long LeftEdge;
+    LeftEdge = in.tellg();                                  //Начало потока
     in.seekg(0, in.end);
-    std::cout<<"Line "<<in.tellg()<<std::endl;
-    unsigned int zzz= in.tellg();
-    std::cout<<zzz<<std::endl;
-    RightEdge = in.tellg(); // CLASS_SIZE;    // Конец потока ( в котах)
+    RightEdge = in.tellg();                                 // Конец потока
     in.seekg(0, in.beg);
-    std::streampos currentOffset = (RightEdge - LeftEdge )/2;
-    currentOffset = floor(currentOffset / CLASS_SIZE);
-    std::cout<<currentOffset<<std::endl;
-    int delta = 0;
+    unsigned int currentOffset = (RightEdge - LeftEdge )/2;
+    currentOffset = floor(currentOffset / CLASS_SIZE);      // Получаем сдвиг относительно начала в котах, при сдвиге умножаем на размер кота.
+    std::cout<<"Start offset "<<currentOffset<<std::endl;
+    int delta = 0;                                          // тут изменение offset'a
     while(RightEdge - LeftEdge != 1)
     {
-
+        std::cout<<"Offset "<<currentOffset<<std::endl;
         in.seekg( currentOffset * CLASS_SIZE,in.beg);
         Cat kitty;
         in >> kitty;
         if(kitty.getAge() < age)
         {
-            //Вправо
+                //Вправо
             LeftEdge = currentOffset * CLASS_SIZE;
-            delta = (RightEdge - LeftEdge) / 2;
+            delta = floor((RightEdge - LeftEdge) / (2*CLASS_SIZE));
         }
         else if(kitty.getAge() > age)
         {
-            //Влево
+                //Влево
             RightEdge = currentOffset * CLASS_SIZE;
-            delta = -(RightEdge - LeftEdge) / 2;
+            std::cout<<(LeftEdge - RightEdge ) / (2*CLASS_SIZE)<<std::endl;
+            delta = floor((LeftEdge - RightEdge ) / (2*CLASS_SIZE));
         }
         else
         {
-            //Надо двигаться влево пока не пропадет совпадения затем до упора вправо
-            std::cout<<"Нашел"<<std::endl;
-            std::cout<<"offset "<<currentOffset<<std::endl;
+                //Надо двигаться влево пока не пропадет совпадения
             int countOfSteps = 0;
+            std::cout<<"Нашел "<<std::endl;
             while(1)
             {
+
                 countOfSteps--;
-                in.seekg( ((int)currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
+                in.seekg((currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
                 in >> kitty;
-                if(kitty.getAge() != age)
+                if(kitty.getAge() != age)       // Как только вышли за пределы слева вернулись на шаг назад
                 {
                     countOfSteps++;
-                    in.seekg( ((int)currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
+                    std::cout<<"До "<<in.tellg();
+                    in.seekg( (currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
+                    std::cout<<" После "<<in.tellg()<<std::endl;
+                    in.close();
+                    return (currentOffset + countOfSteps) * CLASS_SIZE;
                     break;
                 }
 
             }
-            while(1)
-            {
-//                std::cout<<c.getAge()<<std::endl;
-                in >> kitty;
-//                std::cout<<"Выписал бы "<<c.getAge()<<std::endl;
-                if(kitty.getAge() != age)
-                {
-                    break;
-                }
-//                c.printCat();
-            }
-//            c.printCat();
+
             break;
         }
-        currentOffset += floor(delta / CLASS_SIZE);
+        std::cout<<"Delta "<<floor(delta / CLASS_SIZE)<<std::endl;
+        currentOffset += delta;
     }
     in.close();
+    return -1;
 }

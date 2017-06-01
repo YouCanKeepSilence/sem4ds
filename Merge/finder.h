@@ -10,10 +10,11 @@ public:
     void setFileWithAges(std::string sortByAge);
     std::string getFileWithNames();
     std::string getFileWithAges();
-    void find(int age);
-    void find(int from, int to);
+
+    void find(int from, int to = 0);
     void find(std::string word);
 private:
+    long long findOffset(int age);            //Вернет необходимый сдвиг для установки в начало искомых котов, -1 если нет такого.
     std::string sortByName;
     std::string sortByAge;
 };
