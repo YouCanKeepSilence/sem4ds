@@ -42,6 +42,9 @@ void Finder::find(int age)
     std::streampos LeftEdge;
     LeftEdge = in.tellg(); // CLASS_SIZE;     //Начало потока ( в котах)
     in.seekg(0, in.end);
+    std::cout<<"Line "<<in.tellg()<<std::endl;
+    unsigned int zzz= in.tellg();
+    std::cout<<zzz<<std::endl;
     RightEdge = in.tellg(); // CLASS_SIZE;    // Конец потока ( в котах)
     in.seekg(0, in.beg);
     std::streampos currentOffset = (RightEdge - LeftEdge )/2;
@@ -52,18 +55,15 @@ void Finder::find(int age)
     {
 
         in.seekg( currentOffset * CLASS_SIZE,in.beg);
-        Cat c;
-        in >> c;
-        std::cout<<c.getAge()<<std::endl;
-        std::cout<<" Offset : "<<currentOffset<<std::endl;
-        if(c.getAge() < age)
+        Cat kitty;
+        in >> kitty;
+        if(kitty.getAge() < age)
         {
-
             //Вправо
             LeftEdge = currentOffset * CLASS_SIZE;
             delta = (RightEdge - LeftEdge) / 2;
         }
-        else if(c.getAge() > age)
+        else if(kitty.getAge() > age)
         {
             //Влево
             RightEdge = currentOffset * CLASS_SIZE;
@@ -71,14 +71,38 @@ void Finder::find(int age)
         }
         else
         {
+            //Надо двигаться влево пока не пропадет совпадения затем до упора вправо
             std::cout<<"Нашел"<<std::endl;
-            c.printCat();
+            std::cout<<"offset "<<currentOffset<<std::endl;
+            int countOfSteps = 0;
+            while(1)
+            {
+                countOfSteps--;
+                in.seekg( ((int)currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
+                in >> kitty;
+                if(kitty.getAge() != age)
+                {
+                    countOfSteps++;
+                    in.seekg( ((int)currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
+                    break;
+                }
+
+            }
+            while(1)
+            {
+//                std::cout<<c.getAge()<<std::endl;
+                in >> kitty;
+//                std::cout<<"Выписал бы "<<c.getAge()<<std::endl;
+                if(kitty.getAge() != age)
+                {
+                    break;
+                }
+//                c.printCat();
+            }
+//            c.printCat();
             break;
         }
-        currentOffset += delta / CLASS_SIZE;
-//        currentOffset = floor(currentOffset / CLASS_SIZE);
-//        break;
-
+        currentOffset += floor(delta / CLASS_SIZE);
     }
     in.close();
 }

@@ -18,31 +18,31 @@ int main(int argc, char *argv[])
 //    Sorter sorter("dictionaryNechet.txt", "sortByAge.dat" , 0);
 //    sorter.sort();
     ifstream in;
-    in.open("sortByAge.dat",ios_base::binary);
-    if(!in.is_open())
-    {
-        cout<<"Нет такого";
-    }
-    Cat c;
-    int temp = 0;
-    in >> c;
-    while(!in.eof())
-    {
-        if(temp > c.getAge())
-        {
-            cout<<"Error"<<endl;
-        }
-        temp = c.getAge();
-//        c.printCat();
-//        cout<<temp<<endl;
-        if(temp == 57)
-        {
-            c.printCat();
-            break;
-        }
-        in >> c;
-    }
-    in.close();
+//    in.open("sortByAge.dat",ios_base::binary);
+//    if(!in.is_open())
+//    {
+//        cout<<"Нет такого";
+//    }
+//    Cat c;
+//    int temp = 0;
+//    in >> c;
+//    while(!in.eof())
+//    {
+//        if(temp > c.getAge())
+//        {
+//            cout<<"Error"<<endl;
+//        }
+//        temp = c.getAge();
+////        c.printCat();
+////        cout<<temp<<endl;
+//        if(temp == 57)
+//        {
+//            c.printCat();
+//            break;
+//        }
+//        in >> c;
+//    }
+//    in.close();
     cout<<"Elapsed time "<<(clock() - start)/CLOCKS_PER_SEC<<" s"<<endl;
     return 0;
 }
