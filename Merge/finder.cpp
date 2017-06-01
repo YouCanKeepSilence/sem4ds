@@ -42,18 +42,14 @@ void Finder::findAge(int from, int to)
     try
     {
         offset = findOffset(Cat(from));
+        openCurrentFile();
     }
     catch(const char * error)
     {
         std::cerr<<error<<std::endl;
         return;
     }
-    std::ifstream in;
-    in.open(currentFileName , std::ios::binary);
-    if(!in.is_open())
-    {
-        throw "Error no file " + currentFileName + " or it can't be open";
-    }
+
     in.seekg(offset, in.beg);
     Cat kitty;
     in >> kitty;
@@ -96,18 +92,14 @@ void Finder::findName(std::string name)
     try
     {
         offset = findOffset(Cat(name));
+        openCurrentFile();
     }
     catch(const char * error)
     {
         std::cerr<<error<<std::endl;
         return;
     }
-    std::ifstream in;
-    in.open(currentFileName , std::ios::binary);
-    if(!in.is_open())
-    {
-        throw "Error no file " + currentFileName + " or it can't be open";
-    }
+
     in.seekg(offset, in.beg);
     Cat kitty;
     in >> kitty;
@@ -149,18 +141,14 @@ void Finder::findBreed(std::string breed)
     try
     {
         offset = findOffset(Cat("",breed));
+        openCurrentFile();
     }
     catch(const char * error)
     {
         std::cerr<<error<<std::endl;
         return;
     }
-    std::ifstream in;
-    in.open(currentFileName , std::ios::binary);
-    if(!in.is_open())
-    {
-        throw "Error no file " + currentFileName + " or it can't be open";
-    }
+
     in.seekg(offset, in.beg);
     Cat kitty;
     in >> kitty;
@@ -196,7 +184,7 @@ void Finder::findBreed(std::string breed)
 
 long long Finder::findOffset(Cat target)
 {
-    std::ifstream in;
+//    std::ifstream in;
     in.open(currentFileName , std::ios::binary);
     if(!in.is_open())
     {
@@ -261,5 +249,14 @@ void Finder::setState(int state)
         lessThan = &Cat::lessThanByAge;
         currentFileName = sortByAge;
         break;
+    }
+}
+
+void Finder::openCurrentFile()
+{
+    in.open(currentFileName , std::ios::binary);
+    if(!in.is_open())
+    {
+        throw "Error no file " + currentFileName + " or it can't be open";
     }
 }

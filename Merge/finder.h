@@ -20,6 +20,8 @@ private:
     long long findOffset(Cat target);            //Вернет необходимый сдвиг для установки в начало искомых котов, -1 если нет такого.
     void setState(int state);
     bool (Cat::*lessThan)(const Cat & cat);
+    void openCurrentFile();
+    std::ifstream in;
     std::string currentFileName;
     std::string sortByName;
     std::string sortByAge;
