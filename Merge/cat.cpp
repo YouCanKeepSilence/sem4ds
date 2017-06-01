@@ -9,6 +9,16 @@ Cat::Cat(std::string name, std::string breed, int age, char gender):
 
 }
 
+
+Cat::Cat(int age) :
+    name(""),
+    breed(""),
+    age(age),
+    gender('m')
+{
+
+}
+
 int Cat::getAge()
 {
     return this->age;
@@ -38,22 +48,22 @@ void Cat::printCat()
 }
 
 
-bool Cat::lessThenByName(const Cat &cat)
+bool Cat::lessThanByName(const Cat &cat)
 {
     return (this->name < cat.name);
 }
 
-bool Cat::lessThenByBreed(const Cat &cat)
+bool Cat::lessThanByBreed(const Cat &cat)
 {
     return (this->breed < cat.breed);
 }
 
-bool Cat::lessThenByAge(const Cat &cat)
+bool Cat::lessThanByAge(const Cat &cat)
 {
     return (this->age < cat.age);
 }
 
-bool Cat::lessThenByGender(const Cat &cat)
+bool Cat::lessThanByGender(const Cat &cat)
 {
     return (this->gender < cat.gender);
 }

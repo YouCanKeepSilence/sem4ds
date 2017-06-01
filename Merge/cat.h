@@ -10,6 +10,7 @@ class Cat
 {
 public:
     Cat(std::string name="",std::string breed="",int age=0,char gender='m');
+    Cat(int age);
     friend std::ostream& operator<<(std::ostream& stream, Cat &cat);
     friend std::istream& operator>>(std::istream& stream,Cat &cat);
     int getAge();
@@ -17,10 +18,10 @@ public:
     std::string getBreed();
     char getGender();
     void printCat();
-    bool lessThenByName( const Cat & cat);
-    bool lessThenByBreed(const Cat & cat);
-    bool lessThenByAge(const Cat & cat);
-    bool lessThenByGender(const Cat & cat);
+    bool lessThanByName( const Cat & cat);
+    bool lessThanByBreed(const Cat & cat);
+    bool lessThanByAge(const Cat & cat);
+    bool lessThanByGender(const Cat & cat);
 private:
     std::string name;
     std::string breed;

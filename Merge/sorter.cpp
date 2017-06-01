@@ -21,25 +21,23 @@ void Sorter::setTypeOfSort(unsigned short state)
 {
     switch (state) {
     case 0:
-        lessThan = &Cat::lessThenByAge;
+        lessThan = &Cat::lessThanByAge;
         break;
     case 1:
-        lessThan = &Cat::lessThenByBreed;
+        lessThan = &Cat::lessThanByBreed;
         break;
     case 2:
-        lessThan = &Cat::lessThenByName;
+        lessThan = &Cat::lessThanByName;
         break;
     default:
         std::cerr << "Unknow state. Set zero";
-        lessThan = &Cat::lessThenByAge;
+        lessThan = &Cat::lessThanByAge;
         break;
     }
 }
 
 void Sorter::sort()
 {
-    int debugCounter=0;
-    Cat lastOfHisKind;
     try
     {
         shrinkStartFile();
@@ -74,7 +72,6 @@ void Sorter::sort()
                 if(fullBlock)
                 {
                     writeCat(!currentCat);
-                    lastOfHisKind = cats[(int)!currentCat];
                     currentOutput = !currentOutput;
                     break;
                 }
@@ -107,7 +104,6 @@ void Sorter::sort()
     try
     {
         makeResult();
-        lastOfHisKind.printCat();
     }
     catch(const char * error)
     {

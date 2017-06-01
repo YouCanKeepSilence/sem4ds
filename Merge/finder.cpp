@@ -1,11 +1,11 @@
 #include "finder.h"
-#include "cat.h"
 #include <fstream>
 #include <iostream>
 #include <cmath>
-Finder::Finder(std::string sortByName, std::string sortByAge):
+Finder::Finder(std::string sortByName, std::string sortByAge, std::string sortByBreed):
     sortByName(sortByName),
-    sortByAge(sortByAge)
+    sortByAge(sortByAge),
+    sortByBreed(sortByBreed)
 {
 
 }
@@ -30,16 +30,18 @@ std::string Finder::getFileWithAges()
     return this->sortByAge;
 }
 
-void Finder::find(int from, int to)
+void Finder::findAge(int from, int to)
 {
     if(to == 0)     //Если задано только старт
     {
         to = from;
     }
+    unsigned int countOfCats = 0;
     long long offset;
+    setState(0);
     try
     {
-        offset = findOffset(from);
+        offset = findOffset(Cat(from));
     }
     catch(const char * error)
     {
@@ -47,99 +49,217 @@ void Finder::find(int from, int to)
         return;
     }
     std::ifstream in;
-    in.open(sortByAge , std::ios::binary);
+    in.open(currentFileName , std::ios::binary);
     if(!in.is_open())
     {
-        throw "Error no file " + sortByAge + " or it can't be open";
-    }
-    if(offset == -1)
-    {
-        std::cout<<"We don't have cats with this options"<<std::endl;
-        return;
+        throw "Error no file " + currentFileName + " or it can't be open";
     }
     in.seekg(offset, in.beg);
     Cat kitty;
     in >> kitty;
-    while(kitty.getAge() <= to && !in.eof())
+    if(kitty.getAge() != from)                  // Жуткий костыль, как тебя убрать?
     {
+        in>>kitty;
+    }
+    else
+    {
+        in.seekg(offset - CLASS_SIZE, in.beg);
+        in >> kitty;
+        if(kitty.getAge() != from)
+        {
+            in>>kitty;
+        }
+    }
+    while((kitty.getAge() >= from) && (kitty.getAge() <= to) && !in.eof())
+    {
+        countOfCats++;
         kitty.printCat();
         in>>kitty;
+    }
+    if(countOfCats == 0)
+    {
+        std::cout<<"No cats found"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"Number of found cats "<<countOfCats<<std::endl;
     }
     in.close();
 
 }
 
-void Finder::find(std::string word)
+void Finder::findName(std::string name)
 {
-
-}
-
-long long Finder::findOffset(int age)
-{
+    unsigned int countOfCats = 0;
+    long long offset;
+    setState(2);
+    try
+    {
+        offset = findOffset(Cat(name));
+    }
+    catch(const char * error)
+    {
+        std::cerr<<error<<std::endl;
+        return;
+    }
     std::ifstream in;
-    in.open(sortByAge , std::ios::binary);
+    in.open(currentFileName , std::ios::binary);
     if(!in.is_open())
     {
-        throw "Error no file " + sortByAge + " or it can't be open";
+        throw "Error no file " + currentFileName + " or it can't be open";
+    }
+    in.seekg(offset, in.beg);
+    Cat kitty;
+    in >> kitty;
+    if(strncmp(kitty.getName().c_str(),name.c_str(),name.length()))                  // Жуткий костыль, как тебя убрать?
+    {
+        in>>kitty;
+    }
+    else
+    {
+        in.seekg(offset - CLASS_SIZE, in.beg);
+        in >> kitty;
+        if(strncmp(kitty.getName().c_str(),name.c_str(),name.length()))
+        {
+            in>>kitty;
+        }
+    }
+    while(!strncmp(kitty.getName().c_str(),name.c_str(),name.length()) && !in.eof())
+    {
+        countOfCats++;
+        kitty.printCat();
+        in>>kitty;
+    }
+    if(countOfCats == 0)
+    {
+        std::cout<<"No cats found"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"Number of found cats "<<countOfCats<<std::endl;
+    }
+    in.close();
+}
+
+void Finder::findBreed(std::string breed)
+{
+    unsigned int countOfCats = 0;
+    long long offset;
+    setState(1);
+    try
+    {
+        offset = findOffset(Cat("",breed));
+    }
+    catch(const char * error)
+    {
+        std::cerr<<error<<std::endl;
+        return;
+    }
+    std::ifstream in;
+    in.open(currentFileName , std::ios::binary);
+    if(!in.is_open())
+    {
+        throw "Error no file " + currentFileName + " or it can't be open";
+    }
+    in.seekg(offset, in.beg);
+    Cat kitty;
+    in >> kitty;
+    if(kitty.getBreed() != breed)                  // Жуткий костыль, как тебя убрать?
+    {
+        in>>kitty;
+    }
+    else
+    {
+        in.seekg(offset - CLASS_SIZE, in.beg);
+        in >> kitty;
+        if(kitty.getBreed() != breed)
+        {
+            in>>kitty;
+        }
+    }
+    while(kitty.getBreed() == breed && !in.eof())
+    {
+        countOfCats++;
+        kitty.printCat();
+        in>>kitty;
+    }
+    if(countOfCats == 0)
+    {
+        std::cout<<"No cats found"<<std::endl;
+    }
+    else
+    {
+        std::cout<<"Number of found cats "<<countOfCats<<std::endl;
+    }
+    in.close();
+}
+
+long long Finder::findOffset(Cat target)
+{
+    std::ifstream in;
+    in.open(currentFileName , std::ios::binary);
+    if(!in.is_open())
+    {
+        throw "Error no file " + currentFileName + " or it can't be open";
     }
     long long RightEdge;
     long long LeftEdge;
+    long long result = 0;
     LeftEdge = in.tellg();                                  //Начало потока
     in.seekg(0, in.end);
     RightEdge = in.tellg();                                 // Конец потока
     in.seekg(0, in.beg);
     unsigned int currentOffset = (RightEdge - LeftEdge )/2;
     currentOffset = floor(currentOffset / CLASS_SIZE);      // Получаем сдвиг относительно начала в котах, при сдвиге умножаем на размер кота.
-    std::cout<<"Start offset "<<currentOffset<<std::endl;
-    int delta = 0;                                          // тут изменение offset'a
-    while(RightEdge - LeftEdge != 1)
+    int delta = -1;                                          // тут изменение offset'a
+    Cat kitty;
+
+    while(RightEdge - LeftEdge != 1 && delta != 0)
     {
         std::cout<<"Offset "<<currentOffset<<std::endl;
         in.seekg( currentOffset * CLASS_SIZE,in.beg);
-        Cat kitty;
+        result = in.tellg();
         in >> kitty;
-        if(kitty.getAge() < age)
+        if((kitty.*lessThan)(target))
         {
                 //Вправо
             LeftEdge = currentOffset * CLASS_SIZE;
             delta = floor((RightEdge - LeftEdge) / (2*CLASS_SIZE));
         }
-        else if(kitty.getAge() > age)
+        else
         {
                 //Влево
             RightEdge = currentOffset * CLASS_SIZE;
-            std::cout<<(LeftEdge - RightEdge ) / (2*CLASS_SIZE)<<std::endl;
             delta = floor((LeftEdge - RightEdge ) / (2*CLASS_SIZE));
         }
-        else
-        {
-                //Надо двигаться влево пока не пропадет совпадения
-            int countOfSteps = 0;
-            std::cout<<"Нашел "<<std::endl;
-            while(1)
-            {
 
-                countOfSteps--;
-                in.seekg((currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
-                in >> kitty;
-                if(kitty.getAge() != age)       // Как только вышли за пределы слева вернулись на шаг назад
-                {
-                    countOfSteps++;
-                    std::cout<<"До "<<in.tellg();
-                    in.seekg( (currentOffset + countOfSteps) * CLASS_SIZE,in.beg);
-                    std::cout<<" После "<<in.tellg()<<std::endl;
-                    in.close();
-                    return (currentOffset + countOfSteps) * CLASS_SIZE;
-                    break;
-                }
-
-            }
-
-            break;
-        }
-        std::cout<<"Delta "<<floor(delta / CLASS_SIZE)<<std::endl;
+        std::cout<<"Delta "<<delta<<std::endl;
         currentOffset += delta;
     }
+    kitty.printCat();
     in.close();
-    return -1;
+    return result;
+}
+
+void Finder::setState(int state)
+{
+    switch (state) {
+    case 0:
+        lessThan = &Cat::lessThanByAge;
+        currentFileName = sortByAge;
+        break;
+    case 1:
+        lessThan = &Cat::lessThanByBreed;
+        currentFileName = sortByBreed;
+        break;
+    case 2:
+        lessThan = &Cat::lessThanByName;
+        currentFileName = sortByName;
+        break;
+    default:
+        std::cerr << "Unknow state. Set zero";
+        lessThan = &Cat::lessThanByAge;
+        currentFileName = sortByAge;
+        break;
+    }
 }

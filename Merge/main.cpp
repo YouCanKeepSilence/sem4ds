@@ -13,12 +13,15 @@ int main(int argc, char *argv[])
     system("clear");
     clock_t start = clock();
     Finder path;
-    path.setFileWithAges("sortByAge.dat");
-    path.find(57);
-//    Sorter sorter("dictionaryNechet.txt", "sortByAge.dat" , 0);
+    path.findBreed("Мейн-кун");
+//    int s = 7;
+//    int e = 7;
+//    string name = "А";
+//    path.find(name);
+//    Sorter sorter("dictionaryNechet.txt", "sortByBreed.dat" , 1);
 //    sorter.sort();
-    ifstream in;
-//    in.open("sortByAge.dat",ios_base::binary);
+//    ifstream in;
+//    in.open("sortByName.dat",ios_base::binary);
 //    if(!in.is_open())
 //    {
 //        cout<<"Нет такого";
@@ -26,23 +29,28 @@ int main(int argc, char *argv[])
 //    Cat c;
 //    int temp = 0;
 //    in >> c;
+//    int counter = 0;
 //    while(!in.eof())
 //    {
-//        if(temp > c.getAge())
-//        {
-//            cout<<"Error"<<endl;
-//        }
+////        if(temp > c.getAge())
+////        {
+////            cout<<"Error"<<endl;
+////        }
 //        temp = c.getAge();
 ////        c.printCat();
 ////        cout<<temp<<endl;
-//        if(temp == 57)
+////        if(temp >= s && temp <= e)
+//        if(!strncmp(c.getName().c_str(),name.c_str(),name.length()))
 //        {
-//            c.printCat();
-//            break;
+//            counter++;
+////            c.printCat();
+////            break;
+////            c.printCat();
 //        }
 //        in >> c;
 //    }
 //    in.close();
+//    cout<<"in file: "<<counter<<endl;
     cout<<"Elapsed time "<<(clock() - start)/CLOCKS_PER_SEC<<" s"<<endl;
     return 0;
 }
