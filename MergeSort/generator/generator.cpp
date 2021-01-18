@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <ctime>
 
+#define DICTIONARY_SIZE 10000
+
 int main()
 {
     std::ifstream in1;
@@ -101,7 +103,7 @@ int main()
     }
     
     srand(time(0));
-    for (unsigned int i=0; i<7000000; ++i)
+    for (unsigned int i=0; i<DICTIONARY_SIZE; ++i)
     {
         int seed=rand();
         
